@@ -1,0 +1,40 @@
+---
+import { config } from '../config';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer section--dark">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <img src="/logo-dark.svg" alt="" width="44" height="44" />
+      <p>{config.name}</p>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href={config.discordUrl} target="_blank" rel="noopener">Discord</a>
+      <a href={`mailto:${config.email}`}>{config.email}</a>
+    </nav>
+    <p class="footer__copy">© {year} {config.name}</p>
+  </div>
+</footer>
+
+<style>
+  .footer { padding-block: 3.5rem 2.5rem; border-top: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent); }
+  .footer__inner { display: grid; gap: 1.75rem; }
+  .footer__brand { display: flex; align-items: center; gap: 0.9rem; }
+  .footer__brand img { border-radius: 10px; }
+  .footer__brand p { margin: 0; font-size: 1.1rem; }
+  .footer__links { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; }
+  .footer__links a, .footer__copy {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-underline-offset: 0.3em;
+    overflow-wrap: anywhere;
+  }
+  .footer__links a:hover { color: var(--color-accent); }
+  .footer__copy { margin: 0; opacity: 0.6; }
+  @media (min-width: 800px) {
+    .footer__inner { grid-template-columns: 1fr auto; align-items: center; }
+    .footer__copy { grid-column: 1 / -1; }
+  }
+</style>

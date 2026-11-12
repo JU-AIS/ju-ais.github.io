@@ -1,0 +1,98 @@
+---
+import { config } from '../config';
+
+const links = [
+  { href: '/events', label: 'Events' },
+  { href: '/partners', label: 'Partners' },
+  { href: '/#about', label: 'About' },
+];
+---
+
+<header class="nav">
+  <div class="nav__inner container">
+    <a href="/" class="nav__brand" aria-label={`${config.shortName} home`}>
+      <img src="/logo-dark.svg" alt="" width="36" height="36" />
+      <span>{config.shortName}</span>
+    </a>
+    <button class="nav__toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+    <nav id="nav-links" class="nav__links" aria-label="Main">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      <a href={config.joinUrl} class="btn btn--primary nav__join" target="_blank" rel="noopener">Join</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg-dark) 82%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent);
+    color: var(--color-text-on-dark);
+  }
+  .nav__inner { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 1rem; }
+  .nav__brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.14em; }
+  .nav__brand img { border-radius: 8px; }
+  .nav__links { display: flex; align-items: center; gap: 2rem; }
+  .nav__links a:not(.btn) {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  .nav__links a:not(.btn):hover { opacity: 1; color: var(--color-accent); }
+  .nav__join { min-height: 40px; padding: 0.5em 1.3em; background: var(--color-text-on-dark); color: var(--color-primary); }
+  .nav__toggle { display: none; }
+
+  @media (max-width: 720px) {
+    .nav__toggle {
+      display: grid;
+      place-content: center;
+      gap: 6px;
+      width: 44px;
+      height: 44px;
+      margin-left: auto;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+    .nav__toggle span { display: block; width: 22px; height: 2px; background: var(--color-text-on-dark); transition: transform 0.25s; }
+    .nav__toggle[aria-expanded='true'] span:first-child { transform: translateY(4px) rotate(45deg); }
+    .nav__toggle[aria-expanded='true'] span:last-child { transform: translateY(-4px) rotate(-45deg); }
+    .nav__links {
+      position: absolute;
+      inset: 100% 0 auto 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0.5rem 1.25rem 1.5rem;
+      background: var(--color-bg-dark);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent);
+      display: none;
+    }
+    .nav__links.is-open { display: flex; }
+    .nav__links a:not(.btn) { padding: 1rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 12%, transparent); }
+    .nav__join { margin-top: 1.25rem; min-height: 48px; }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav__toggle')!;
+  const links = document.getElementById('nav-links')!;
+  const setOpen = (open: boolean) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    links.classList.toggle('is-open', open);
+  };
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  links.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+</script>
