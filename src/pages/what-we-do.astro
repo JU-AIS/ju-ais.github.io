@@ -55,8 +55,9 @@ const activities = [
   .activities { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
   .activity {
     padding: 1.75rem;
-    border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent);
     border-radius: 6px;
+    background: var(--color-bg-soft);
     transition: border-color 0.2s ease;
   }
   .activity:hover { border-color: color-mix(in srgb, var(--color-text) 40%, transparent); }
@@ -65,7 +66,7 @@ const activities = [
   .activity .label { margin: 1.5rem 0 0.5rem; color: var(--color-accent); }
 
   .meter { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px; width: fit-content; }
-  .meter span { width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--color-text) 18%, transparent); }
+  .meter span { width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--color-text) 24%, transparent); }
   .meter .on { transition: background-color 0.3s ease, transform 0.3s ease; transition-delay: calc(var(--i) * 18ms + 200ms); }
   .is-visible .meter .on, .no-js .meter .on { background: var(--color-text); }
   .activity:hover .meter .on { transform: scale(1.4); transition-delay: calc(var(--i) * 6ms); }
