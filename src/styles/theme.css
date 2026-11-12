@@ -10,12 +10,13 @@
   --color-secondary: #5B2A86;
   --color-deep: #3F2475;
   --color-accent: #C9B3F2;
-  --color-bg-dark: #1A1623;
-  --color-bg: #1A1623;
-  --color-bg-soft: #262030;
+  --color-bg-dark: #4B2A73;
+  --color-bg: #4B2A73;
+  --color-bg-soft: #3A205C;
   --color-text: #FFFFFF;
-  --color-text-muted: #D3CCE0;
+  --color-text-muted: #E2D8F2;
   --color-text-on-dark: #FFFFFF;
+  --color-ink: #1E1035;
 
   --font-heading: 'Libre Caslon Text', Georgia, serif;
   --font-body: 'Libre Caslon Text', Georgia, serif;
