@@ -51,8 +51,8 @@ p { margin: 0 0 1em; }
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-.btn--primary { background: var(--color-text-on-dark); color: var(--color-primary); }
-.btn--primary:hover { background: var(--color-accent); }
+.btn--primary { background: var(--color-primary); color: var(--color-text-on-dark); }
+.btn--primary:hover { background: color-mix(in srgb, var(--color-primary), white 14%); }
 
 .text-link {
   font-family: var(--font-mono);
