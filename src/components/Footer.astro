@@ -18,7 +18,7 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .footer { padding-block: 3.5rem 2.5rem; border-top: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent); }
+  .footer { padding-block: 3.5rem 2.5rem; border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 10%, transparent); }
   .footer__inner { display: grid; gap: 1.75rem; }
   .footer__brand { display: flex; align-items: center; gap: 0.9rem; }
   .footer__brand img { border-radius: 10px; }
@@ -31,7 +31,7 @@ const year = new Date().getFullYear();
     text-underline-offset: 0.3em;
     overflow-wrap: anywhere;
   }
-  .footer__links a:hover { color: var(--color-accent); }
+  .footer__links a:hover { opacity: 0.75; }
   .footer__copy { margin: 0; opacity: 0.6; }
   @media (min-width: 800px) {
     .footer__inner { grid-template-columns: 1fr auto; align-items: center; }

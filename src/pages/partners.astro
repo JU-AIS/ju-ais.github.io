@@ -16,7 +16,7 @@ const mailto = `mailto:${config.partnerEmail}?subject=${encodeURIComponent(`Part
   <section class="section section--dark page-head on-dark">
     <div class="container">
       <p class="label">For companies</p>
-      <h1>Meet the next generation of <em>AI builders.</em></h1>
+      <h1>Partner with JU AIS</h1>
       <p class="page-head__lead">
         We bring students from every school at Jönköping University together to learn and build with AI. Partner with us
         to reach them, share what you do and shape what they build.
@@ -27,8 +27,7 @@ const mailto = `mailto:${config.partnerEmail}?subject=${encodeURIComponent(`Part
 
   <section class="section">
     <div class="container">
-      <p class="label reveal">What we offer</p>
-      <h2 class="reveal">Ways to work with us</h2>
+      <h2 class="reveal">What we offer</h2>
       <ul class="partner-offers">
         {
           offers.map((offer) => (
@@ -53,7 +52,7 @@ const mailto = `mailto:${config.partnerEmail}?subject=${encodeURIComponent(`Part
 <style>
   .partners__cta { margin-top: 2.25rem; }
   .partner-offers { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 0 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-  .partner-offers li { padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent); }
+  .partner-offers li { padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent); }
   .partner-offers p { margin: 0; color: var(--color-text-muted); }
   .partners__end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
   .partners__end h2 { margin: 0; }

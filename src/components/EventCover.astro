@@ -34,11 +34,8 @@ const { cover, coverAlt, title, type } = event.data;
     padding: 1.25rem;
     overflow: hidden;
     color: var(--color-text-on-dark);
-    background:
-      radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--color-accent) 45%, transparent) 0, transparent 38%),
-      radial-gradient(ellipse 70% 40% at 78% 30%, transparent 60%, color-mix(in srgb, var(--color-accent) 30%, transparent) 61%, transparent 63%),
-      linear-gradient(135deg, var(--color-bg-dark), var(--color-primary));
+    background: var(--color-bg-dark);
   }
-  .cover--placeholder .label { color: var(--color-accent); }
+  .cover--placeholder .label { color: color-mix(in srgb, var(--color-text-on-dark) 60%, transparent); }
   .cover__title { font-family: var(--font-heading); font-size: 1.6rem; line-height: 1.1; }
 </style>

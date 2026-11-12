@@ -1,21 +1,42 @@
 ---
 import { config } from '../config';
+import { formatDate, type Event } from '../lib/events';
+
+interface Props {
+  nextEvent?: Event;
+}
+
+const { nextEvent } = Astro.props;
 ---
 
 <section class="hero section--dark on-dark">
   <canvas class="hero__canvas" aria-hidden="true"></canvas>
   <div class="hero__content container">
-    <p class="label hero__eyebrow">Jönköping University · Student association</p>
-    <h1>AI for every <em>student</em> at JU.</h1>
+    <p class="label hero__eyebrow">Jönköping University</p>
+    <h1>AI for every student at JU.</h1>
     <p class="hero__lead">
-      We build, learn and explore AI together. Open to every programme, every school and every exchange student.
-      No background needed.
+      A student association for building, learning and talking about AI. Open to all four schools, every programme and
+      exchange students. No background needed.
     </p>
     <div class="hero__actions">
       <a href={config.joinUrl} class="btn btn--primary hero__join" target="_blank" rel="noopener">Join now</a>
-      <a href={config.discordUrl} class="text-link" target="_blank" rel="noopener">Join our Discord →</a>
+      <a href={config.discordUrl} class="text-link" target="_blank" rel="noopener">Discord →</a>
     </div>
   </div>
+  {
+    nextEvent && (
+      <a href={`#${nextEvent.id}`} class="hero__next">
+        <span class="container hero__next-inner">
+          <span class="label">Next event</span>
+          <span class="hero__next-title">{nextEvent.data.title}</span>
+          <span class="hero__next-meta">
+            {formatDate(nextEvent.data.date)} · {nextEvent.data.location}
+          </span>
+          <span class="hero__next-arrow" aria-hidden="true">→</span>
+        </span>
+      </a>
+    )
+  }
 </section>
 
 <style>
@@ -23,7 +44,8 @@ import { config } from '../config';
     position: relative;
     min-height: calc(100svh - 68px);
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     overflow: hidden;
     isolation: isolate;
   }
@@ -36,21 +58,34 @@ import { config } from '../config';
     pointer-events: none;
     background: linear-gradient(90deg, var(--color-bg-dark) 0%, color-mix(in srgb, var(--color-bg-dark) 70%, transparent) 45%, transparent 75%);
   }
-  .hero__content { padding-block: 5rem; }
+  .hero__content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: 5rem; }
   .hero__eyebrow { margin-bottom: 1.5rem; }
   .hero h1 { max-width: 12ch; margin-bottom: 1.5rem; }
-  .hero h1 em { color: var(--color-accent); }
-  .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.3rem); opacity: 0.88; margin-bottom: 2.5rem; }
+  .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.25rem); opacity: 0.8; margin-bottom: 2.5rem; }
   .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; }
-  .hero__join { min-height: 56px; padding-inline: 2.2em; font-size: 1rem; }
-  .hero .text-link { padding-block: 1rem; }
-  .hero .text-link:hover { color: var(--color-accent); }
+  .hero__join { min-height: 52px; padding-inline: 2em; }
+  .hero .text-link { padding-block: 1rem; opacity: 0.8; }
+  .hero .text-link:hover { opacity: 1; }
+
+  .hero__next {
+    display: block;
+    text-decoration: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 15%, transparent);
+    background: var(--color-bg-dark);
+    transition: background-color 0.2s ease;
+  }
+  .hero__next:hover { background: color-mix(in srgb, var(--color-text-on-dark) 5%, var(--color-bg-dark)); }
+  .hero__next-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; padding-block: 1.25rem; }
+  .hero__next-title { font-family: var(--font-heading); font-size: 1.25rem; }
+  .hero__next-meta { font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.7; }
+  .hero__next-arrow { margin-left: auto; }
 
   @media (max-width: 720px) {
-    .hero { align-items: flex-end; }
     .hero::after { background: linear-gradient(0deg, var(--color-bg-dark) 15%, color-mix(in srgb, var(--color-bg-dark) 55%, transparent) 60%, transparent 100%); }
-    .hero__content { padding-block: 3rem; }
+    .hero__content { justify-content: flex-end; padding-block: 3rem 2.5rem; }
     .hero__join { width: 100%; }
+    .hero__next-inner { flex-direction: column; gap: 0.25rem; position: relative; }
+    .hero__next-arrow { position: absolute; right: 0; top: 50%; translate: 0 -50%; }
   }
 </style>
 

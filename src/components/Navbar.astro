@@ -29,10 +29,8 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--color-bg-dark) 82%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent);
+    background: var(--color-bg-dark);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-text-on-dark) 10%, transparent);
     color: var(--color-text-on-dark);
   }
   .nav__inner { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 1rem; }
@@ -41,14 +39,12 @@ const links = [
   .nav__links { display: flex; align-items: center; gap: 2rem; }
   .nav__links a:not(.btn) {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-size: 0.88rem;
     text-decoration: none;
-    opacity: 0.85;
+    opacity: 0.75;
     transition: opacity 0.2s;
   }
-  .nav__links a:not(.btn):hover { opacity: 1; color: var(--color-accent); }
+  .nav__links a:not(.btn):hover { opacity: 1; }
   .nav__join { min-height: 40px; padding: 0.5em 1.3em; background: var(--color-text-on-dark); color: var(--color-primary); }
   .nav__toggle { display: none; }
 
@@ -75,11 +71,11 @@ const links = [
       gap: 0;
       padding: 0.5rem 1.25rem 1.5rem;
       background: var(--color-bg-dark);
-      border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-text-on-dark) 10%, transparent);
       display: none;
     }
     .nav__links.is-open { display: flex; }
-    .nav__links a:not(.btn) { padding: 1rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 12%, transparent); }
+    .nav__links a:not(.btn) { padding: 1rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text-on-dark) 10%, transparent); }
     .nav__join { margin-top: 1.25rem; min-height: 48px; }
   }
 </style>

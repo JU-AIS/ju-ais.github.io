@@ -4,14 +4,16 @@ import { config } from '../config';
 
 <section class="section section--dark join">
   <div class="container join__inner reveal">
-    <h2>Curious about AI? <em>Come build with us.</em></h2>
+    <div>
+      <h2>Join JU AIS</h2>
+      <p>Membership is open to all students at Jönköping University.</p>
+    </div>
     <a href={config.joinUrl} class="btn btn--primary" target="_blank" rel="noopener">Join now</a>
   </div>
 </section>
 
 <style>
-  .join { background: radial-gradient(ellipse at 50% 120%, var(--color-secondary), var(--color-bg-dark) 65%); }
-  .join__inner { display: grid; justify-items: center; gap: 2rem; text-align: center; }
-  .join h2 { max-width: 18ch; margin: 0; }
-  .join em { color: var(--color-accent); }
+  .join__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem 3rem; }
+  .join h2 { margin-bottom: 0.4rem; }
+  .join p { margin: 0; opacity: 0.75; }
 </style>

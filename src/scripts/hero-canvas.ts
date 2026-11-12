@@ -1,32 +1,22 @@
-interface Node {
-  ring: number;
-  angle: number;
-  speed: number;
-  radius: number;
-  size: number;
+interface Particle {
   x: number;
   y: number;
+  vx: number;
+  vy: number;
+  depth: number;
+  alpha: number;
 }
 
-interface Ring {
-  rx: number;
-  ry: number;
-  tilt: number;
-}
-
-const LINK_DISTANCE = 120;
-const POINTER_RADIUS = 160;
+const POINTER_RADIUS = 180;
+const BASE_SPEED = 18;
 
 function cssColor(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function withAlpha(hex: string, alpha: number): string {
+function toRgb(hex: string): string {
   const value = hex.replace('#', '');
-  const r = parseInt(value.slice(0, 2), 16);
-  const g = parseInt(value.slice(2, 4), 16);
-  const b = parseInt(value.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  return [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16)).join(', ');
 }
 
 export function startHeroCanvas(canvas: HTMLCanvasElement): void {
@@ -34,15 +24,12 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   if (!ctx) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const accent = cssColor('--color-accent');
-  const light = cssColor('--color-text-on-dark');
-  const primary = cssColor('--color-primary');
+  const rgb = toRgb(cssColor('--color-text-on-dark'));
 
   let width = 0;
   let height = 0;
-  let rings: Ring[] = [];
-  let nodes: Node[] = [];
-  let pointer = { x: -9999, y: -9999, active: false };
+  let particles: Particle[] = [];
+  const pointer = { x: 0, y: 0, vx: 0, vy: 0, active: false };
   let running = false;
   let visible = true;
   let frame = 0;
@@ -52,125 +39,98 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
     const rect = canvas.getBoundingClientRect();
     width = rect.width;
     height = rect.height;
-    const isSmall = width < 720;
-    const dpr = Math.min(window.devicePixelRatio || 1, isSmall ? 1.5 : 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, width < 720 ? 1.5 : 2);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx!.lineCap = 'round';
 
-    const base = Math.max(width, height) * (isSmall ? 0.62 : 0.5);
-    rings = [0.35, 0.55, 0.78, 1].map((scale, i) => ({
-      rx: base * scale,
-      ry: base * scale * (0.38 + i * 0.04),
-      tilt: -0.5 + i * 0.32,
-    }));
-
-    const count = isSmall ? 46 : 96;
-    nodes = Array.from({ length: count }, () => {
-      const ring = Math.floor(Math.random() * rings.length);
+    const count = Math.round(Math.min(700, (width * height) / 2200));
+    particles = Array.from({ length: count }, () => {
+      const depth = 0.3 + Math.random() * 0.7;
       return {
-        ring,
-        angle: Math.random() * Math.PI * 2,
-        speed: (0.04 + Math.random() * 0.08) * (Math.random() < 0.5 ? -1 : 1) / (ring + 1),
-        radius: 0.85 + Math.random() * 0.3,
-        size: 1 + Math.random() * 2.2,
-        x: 0,
-        y: 0,
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: 0,
+        vy: 0,
+        depth,
+        alpha: (0.15 + Math.random() * 0.45) * depth,
       };
     });
   }
 
-  function center(): { cx: number; cy: number } {
-    return width < 720 ? { cx: width * 0.6, cy: height * 0.22 } : { cx: width * 0.62, cy: height * 0.5 };
+  // Smooth, slowly shifting current that every particle drifts along.
+  function flowAngle(x: number, y: number, time: number): number {
+    return Math.sin(x * 0.0025 + time * 0.15) * Math.cos(y * 0.003 - time * 0.1) * Math.PI - Math.PI / 2.4;
   }
 
-  function place(node: Node, cx: number, cy: number): void {
-    const ring = rings[node.ring];
-    const ex = Math.cos(node.angle) * ring.rx * node.radius;
-    const ey = Math.sin(node.angle) * ring.ry * node.radius;
-    node.x = cx + ex * Math.cos(ring.tilt) - ey * Math.sin(ring.tilt);
-    node.y = cy + ex * Math.sin(ring.tilt) + ey * Math.cos(ring.tilt);
+  function step(delta: number, time: number): void {
+    for (const p of particles) {
+      const angle = flowAngle(p.x, p.y, time);
+      const speed = BASE_SPEED * p.depth;
+      p.vx += (Math.cos(angle) * speed - p.vx) * 0.02;
+      p.vy += (Math.sin(angle) * speed - p.vy) * 0.02;
 
-    if (pointer.active) {
-      const dx = pointer.x - node.x;
-      const dy = pointer.y - node.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < POINTER_RADIUS) {
-        const pull = (1 - dist / POINTER_RADIUS) * 0.35;
-        node.x += dx * pull;
-        node.y += dy * pull;
-      }
-    }
-  }
-
-  function drawSpark(cx: number, cy: number, time: number): void {
-    const pulse = reducedMotion ? 1 : 1 + Math.sin(time * 1.6) * 0.12;
-    const size = Math.min(width, height) * 0.045 * pulse;
-
-    const glow = ctx!.createRadialGradient(cx, cy, 0, cx, cy, size * 6);
-    glow.addColorStop(0, withAlpha(accent, 0.35));
-    glow.addColorStop(0.4, withAlpha(primary, 0.25));
-    glow.addColorStop(1, withAlpha(primary, 0));
-    ctx!.fillStyle = glow;
-    ctx!.fillRect(cx - size * 6, cy - size * 6, size * 12, size * 12);
-
-    const inner = size * 0.24;
-    ctx!.beginPath();
-    ctx!.moveTo(cx, cy - size);
-    ctx!.quadraticCurveTo(cx + inner, cy - inner, cx + size, cy);
-    ctx!.quadraticCurveTo(cx + inner, cy + inner, cx, cy + size);
-    ctx!.quadraticCurveTo(cx - inner, cy + inner, cx - size, cy);
-    ctx!.quadraticCurveTo(cx - inner, cy - inner, cx, cy - size);
-    ctx!.fillStyle = light;
-    ctx!.fill();
-  }
-
-  function draw(time: number): void {
-    const { cx, cy } = center();
-    ctx!.clearRect(0, 0, width, height);
-
-    ctx!.lineWidth = 1;
-    for (const ring of rings) {
-      ctx!.beginPath();
-      ctx!.ellipse(cx, cy, ring.rx, ring.ry, ring.tilt, 0, Math.PI * 2);
-      ctx!.strokeStyle = withAlpha(accent, 0.09);
-      ctx!.stroke();
-    }
-
-    for (const node of nodes) place(node, cx, cy);
-
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i];
-        const b = nodes[j];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (dist < LINK_DISTANCE) {
-          ctx!.beginPath();
-          ctx!.moveTo(a.x, a.y);
-          ctx!.lineTo(b.x, b.y);
-          ctx!.strokeStyle = withAlpha(accent, (1 - dist / LINK_DISTANCE) * 0.35);
-          ctx!.stroke();
+      if (pointer.active) {
+        const dx = p.x - pointer.x;
+        const dy = p.y - pointer.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        if (dist < POINTER_RADIUS) {
+          const force = (1 - dist / POINTER_RADIUS) ** 2;
+          // Swirl around the cursor, push away a little and get dragged along with its movement.
+          p.vx += (-dy / dist * 140 + dx / dist * 60) * force * delta * p.depth;
+          p.vy += (dx / dist * 140 + dy / dist * 60) * force * delta * p.depth;
+          p.vx += pointer.vx * force * 1.2;
+          p.vy += pointer.vy * force * 1.2;
         }
       }
-    }
 
-    for (const node of nodes) {
-      const near = pointer.active && Math.hypot(pointer.x - node.x, pointer.y - node.y) < POINTER_RADIUS;
+      p.x += p.vx * delta;
+      p.y += p.vy * delta;
+
+      if (p.x < -10) p.x += width + 20;
+      else if (p.x > width + 10) p.x -= width + 20;
+      if (p.y < -10) p.y += height + 20;
+      else if (p.y > height + 10) p.y -= height + 20;
+    }
+    pointer.vx *= 0.85;
+    pointer.vy *= 0.85;
+  }
+
+  function draw(): void {
+    ctx!.clearRect(0, 0, width, height);
+    for (const p of particles) {
+      const speed = Math.hypot(p.vx, p.vy);
+      const tail = Math.min(speed * 0.12, 18);
+      const glow = Math.min(speed / 120, 0.5);
+      ctx!.strokeStyle = `rgba(${rgb}, ${Math.min(p.alpha + glow, 0.9)})`;
+      ctx!.lineWidth = 0.8 + p.depth * 2.2;
       ctx!.beginPath();
-      ctx!.arc(node.x, node.y, near ? node.size * 1.6 : node.size, 0, Math.PI * 2);
-      ctx!.fillStyle = near ? light : withAlpha(accent, 0.85);
-      ctx!.fill();
+      ctx!.moveTo(p.x - (p.vx / (speed || 1)) * tail, p.y - (p.vy / (speed || 1)) * tail);
+      ctx!.lineTo(p.x + 0.01, p.y);
+      ctx!.stroke();
     }
+  }
 
-    drawSpark(cx, cy, time);
+  function ripple(x: number, y: number): void {
+    for (const p of particles) {
+      const dx = p.x - x;
+      const dy = p.y - y;
+      const dist = Math.hypot(dx, dy) || 1;
+      if (dist < 260) {
+        const force = (1 - dist / 260) * 220 * p.depth;
+        p.vx += (dx / dist) * force;
+        p.vy += (dy / dist) * force;
+      }
+    }
   }
 
   function tick(now: number): void {
     if (!running) return;
     const delta = Math.min((now - last) / 1000, 0.05);
     last = now;
-    for (const node of nodes) node.angle += node.speed * delta;
-    draw(now / 1000);
+    step(delta, now / 1000);
+    draw();
     frame = requestAnimationFrame(tick);
   }
 
@@ -187,10 +147,10 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   }
 
   setup();
-  draw(0);
+  draw();
 
   if (reducedMotion) {
-    window.addEventListener('resize', () => { setup(); draw(0); });
+    window.addEventListener('resize', () => { setup(); draw(); });
     return;
   }
 
@@ -210,9 +170,20 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   const host = canvas.parentElement!;
   host.addEventListener('pointermove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    pointer = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (pointer.active) {
+      pointer.vx = x - pointer.x;
+      pointer.vy = y - pointer.y;
+    }
+    Object.assign(pointer, { x, y, active: true });
   });
   host.addEventListener('pointerleave', () => (pointer.active = false));
+  host.addEventListener('pointerdown', (e) => {
+    if ((e.target as HTMLElement).closest('a, button')) return;
+    const rect = canvas.getBoundingClientRect();
+    ripple(e.clientX - rect.left, e.clientY - rect.top);
+  });
 
   play();
 }
