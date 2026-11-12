@@ -14,10 +14,10 @@ const events = defineCollection({
       date: z.coerce.date(),
       location: z.string(),
       type: z.enum(['hackathon', 'lecture', 'workshop', 'social', 'company visit']),
-      cover: image().optional(),
-      coverAlt: z.string().optional(),
-      signup: z.url().optional(),
-      photos: z.array(image()).optional(),
+      cover: image().nullish(),
+      coverAlt: z.string().nullish(),
+      signup: z.url().nullish(),
+      photos: z.array(image()).nullish(),
     }),
 });
 

@@ -2,13 +2,17 @@
 import Layout from '../layouts/Layout.astro';
 import JoinCta from '../components/JoinCta.astro';
 
+const COLS = 12;
+const ROWS = 4;
+
+// Ordered from the smallest and shortest to the biggest commitment. `scale` is the share of lit dots.
 const activities = [
-  { title: 'Build nights', text: 'Evenings where we sit down together and build something with AI. Bring an idea or join someone else’s.' },
-  { title: 'Hackathons & buildathons', text: 'Longer events where teams build a working project from scratch, often around a challenge from a company.' },
-  { title: 'Workshops', text: 'Two tracks. The beginner track gets you started with AI tools without any programming. The builder track goes deeper into building with models and APIs.' },
-  { title: 'Talks with companies', text: 'People who work with AI in industry tell us what they build and how they got there.' },
-  { title: 'Projects & research', text: 'Join a team on a longer project, or explore AI research together with other students and researchers at JU.' },
-  { title: 'Community evenings & prompt battles', text: 'Relaxed evenings to meet other students, and friendly competitions where the best prompt wins.' },
+  { title: 'Talks with companies', time: '1–2 hours', scale: 0.1, text: 'People who work with AI in industry tell us what they build and how they got there.' },
+  { title: 'Community evenings & prompt battles', time: '2–3 hours', scale: 0.2, text: 'Relaxed evenings to meet other students, and friendly competitions where the best prompt wins.' },
+  { title: 'Workshops', time: '2–3 hours', scale: 0.3, text: 'Two tracks. The beginner track gets you started with AI tools without any programming. The builder track goes deeper into building with models and APIs.' },
+  { title: 'Build nights', time: 'One evening', scale: 0.45, text: 'Evenings where we sit down together and build something with AI. Bring an idea or join someone else’s.' },
+  { title: 'Hackathons & buildathons', time: '1–2 days', scale: 0.7, text: 'Longer events where teams build a working project from scratch, often around a challenge from a company.' },
+  { title: 'Projects & research', time: 'Weeks to a semester', scale: 1, text: 'Join a team on a longer project, or explore AI research together with other students and researchers at JU.' },
 ];
 ---
 
@@ -16,29 +20,57 @@ const activities = [
   <section class="section section--dark page-head">
     <div class="container">
       <h1>What we do</h1>
-      <p class="page-head__lead">We give students a place to learn and build real things with AI outside the classroom.</p>
+      <p class="page-head__lead">From a one-hour talk to a semester-long project. Join as much or as little as you want.</p>
     </div>
   </section>
 
   <section class="section">
-    <ul class="container activities">
+    <ol class="container activities">
       {
-        activities.map((activity) => (
-          <li class="reveal">
-            <h2>{activity.title}</h2>
-            <p>{activity.text}</p>
-          </li>
-        ))
+        activities.map((activity) => {
+          const lit = Math.round(activity.scale * COLS * ROWS);
+          return (
+            <li class="activity reveal">
+              <div class="meter" style={`--cols: ${COLS}; --rows: ${ROWS}`} aria-hidden="true">
+                {Array.from({ length: COLS * ROWS }, (_, i) => {
+                  // Column-major order so the lit area grows left to right like a bar.
+                  const order = (i % COLS) * ROWS + Math.floor(i / COLS);
+                  return order < lit ? <span class="on" style={`--i: ${order}`} /> : <span />;
+                })}
+              </div>
+              <p class="label">{activity.time}</p>
+              <h2>{activity.title}</h2>
+              <p>{activity.text}</p>
+            </li>
+          );
+        })
       }
-    </ul>
+    </ol>
   </section>
 
   <JoinCta />
 </Layout>
 
 <style>
-  .activities { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 0 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
-  .activities li { padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent); }
-  .activities h2 { font-size: 1.4rem; }
-  .activities p { margin: 0; color: var(--color-text-muted); }
+  .activities { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .activity {
+    padding: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+    border-radius: 6px;
+    transition: border-color 0.2s ease;
+  }
+  .activity:hover { border-color: color-mix(in srgb, var(--color-text) 40%, transparent); }
+  .activity h2 { font-size: 1.4rem; }
+  .activity p:last-child { margin: 0; color: var(--color-text-muted); }
+  .activity .label { margin: 1.5rem 0 0.5rem; color: var(--color-accent); }
+
+  .meter { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px; width: fit-content; }
+  .meter span { width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--color-text) 18%, transparent); }
+  .meter .on { transition: background-color 0.3s ease, transform 0.3s ease; transition-delay: calc(var(--i) * 18ms + 200ms); }
+  .is-visible .meter .on, .no-js .meter .on { background: var(--color-text); }
+  .activity:hover .meter .on { transform: scale(1.4); transition-delay: calc(var(--i) * 6ms); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meter .on { background: var(--color-text); transition: none; }
+  }
 </style>
