@@ -117,7 +117,7 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
     for (const dot of dots) {
       // A slow diagonal wave of light keeps the grid alive when nobody touches it.
       const wave = 0.5 + 0.5 * Math.sin(dot.homeX * 0.006 + dot.homeY * 0.004 - time * 0.8);
-      const alpha = 0.16 + wave * 0.2 + dot.glow * 0.7;
+      const alpha = 0.28 + wave * 0.24 + dot.glow * 0.5;
       const radius = 1.1 + dot.glow * 1.6;
       ctx!.fillStyle = `rgba(${rgb}, ${alpha})`;
       ctx!.beginPath();

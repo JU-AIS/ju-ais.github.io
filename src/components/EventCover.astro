@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { config } from '../config';
 import type { Event } from '../lib/events';
 
 interface Props {
@@ -9,14 +10,19 @@ interface Props {
 }
 
 const { event, widths, sizes } = Astro.props;
-const { cover, coverAlt } = event.data;
+const { cover, coverAlt, date } = event.data;
+const part = (options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('en-GB', { timeZone: config.timeZone, ...options }).format(date);
 ---
 
 {
   cover ? (
     <Image src={cover} alt={coverAlt ?? ''} widths={widths} sizes={sizes} class="cover" />
   ) : (
-    <div class="cover cover--placeholder" aria-hidden="true" />
+    <div class="cover cover--placeholder" aria-hidden="true">
+      <span class="cover__day">{part({ day: '2-digit' })}</span>
+      <span class="cover__month">{part({ month: 'short' })}</span>
+    </div>
   )
 }
 
@@ -27,5 +33,12 @@ const { cover, coverAlt } = event.data;
     background-image: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 45%, transparent) 1.1px, transparent 1.6px);
     background-size: 24px 24px;
     background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.25rem 1.5rem;
+    color: var(--color-text-on-dark);
   }
+  .cover__day { font-family: var(--font-heading); font-weight: 700; font-size: clamp(3.5rem, 8vw, 6rem); line-height: 0.9; }
+  .cover__month { font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent); margin-top: 0.5rem; }
 </style>

@@ -18,7 +18,7 @@ const pitches = [
 <Layout>
   <Hero nextEvent={upcoming[0]} />
 
-  <section class="section">
+  <section class="section pitches-section">
     <ul class="container pitches">
       {
         pitches.map((pitch) => (
@@ -48,6 +48,7 @@ const pitches = [
 </Layout>
 
 <style>
+  .pitches-section { padding-bottom: 1rem; }
   .pitches { list-style: none; padding: 0; display: grid; gap: 0 2.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
   .pitch { display: block; height: 100%; padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); text-decoration: none; transition: border-color 0.2s ease; }
   .pitch:hover { border-color: var(--color-text); }
