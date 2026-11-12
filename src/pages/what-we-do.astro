@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JoinCta from '../components/JoinCta.astro';
+
+const activities = [
+  { title: 'Build nights', text: 'Evenings where we sit down together and build something with AI. Bring an idea or join someone else’s.' },
+  { title: 'Hackathons & buildathons', text: 'Longer events where teams build a working project from scratch, often around a challenge from a company.' },
+  { title: 'Workshops', text: 'Two tracks. The beginner track gets you started with AI tools without any programming. The builder track goes deeper into building with models and APIs.' },
+  { title: 'Talks with companies', text: 'People who work with AI in industry tell us what they build and how they got there.' },
+  { title: 'Projects & research', text: 'Join a team on a longer project, or explore AI research together with other students and researchers at JU.' },
+  { title: 'Community evenings & prompt battles', text: 'Relaxed evenings to meet other students, and friendly competitions where the best prompt wins.' },
+];
+---
+
+<Layout title="What we do" description="Build nights, hackathons, workshops, talks with companies, projects and research at Jönköping University.">
+  <section class="section section--dark page-head">
+    <div class="container">
+      <h1>What we do</h1>
+      <p class="page-head__lead">We give students a place to learn and build real things with AI outside the classroom.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <ul class="container activities">
+      {
+        activities.map((activity) => (
+          <li class="reveal">
+            <h2>{activity.title}</h2>
+            <p>{activity.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <JoinCta />
+</Layout>
+
+<style>
+  .activities { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 0 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+  .activities li { padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent); }
+  .activities h2 { font-size: 1.4rem; }
+  .activities p { margin: 0; color: var(--color-text-muted); }
+</style>

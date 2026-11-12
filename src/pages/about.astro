@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JoinCta from '../components/JoinCta.astro';
+
+const mission = [
+  'Grow AI literacy across the whole university.',
+  'Give students a place to build real things with AI outside the classroom.',
+  'Bridge academia and industry through projects, research and events.',
+];
+
+const board = [
+  'Chairman',
+  'Vice-Chairperson',
+  'Head of AI Development',
+  'Head of AI Research',
+  'Head of Business & Partnerships',
+  'Head of Treasury',
+  'Head of Growth',
+  'Head of Tech & Platform',
+];
+---
+
+<Layout title="About" description="Who we are: a student-led non-profit AI association at Jönköping University.">
+  <section class="section section--dark page-head">
+    <div class="container">
+      <h1>About JU AIS</h1>
+      <p class="page-head__lead">A student-led non-profit at Jönköping University, open to every student.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about">
+      <h2 class="reveal">Who we are</h2>
+      <p class="about__text reveal">
+        JU AIS is a student-led non-profit at Jönköping University. We grow AI literacy across all four schools and give
+        students a place to build real things with AI outside the classroom: projects, research, build nights, workshops
+        and talks with companies. No programming or AI background needed. Our goal is to form the next generation of AI
+        builders and leaders at JU, and to bridge academia and industry along the way.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about">
+      <h2 class="reveal">Mission</h2>
+      <ol class="mission">
+        {mission.map((item) => <li class="reveal">{item}</li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about">
+      <h2 class="reveal">Who can join</h2>
+      <p class="about__text reveal">
+        Every student at Jönköping University: JTH, JIBS, HLK and HHJ, every programme, and exchange students. You don’t
+        need any experience with AI or programming.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about">
+      <h2 class="reveal">Board</h2>
+      <ul class="board reveal">
+        {board.map((role) => <li>{role}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <JoinCta />
+</Layout>
+
+<style>
+  .about { display: grid; gap: 1rem 4rem; }
+  .about h2 { margin: 0; }
+  .about__text { max-width: 44rem; font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.6; margin: 0; }
+  .mission { margin: 0; padding: 0; list-style: none; counter-reset: mission; max-width: 44rem; }
+  .mission li { counter-increment: mission; display: grid; grid-template-columns: 2.5rem 1fr; padding-block: 1rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent); font-size: 1.15rem; }
+  .mission li::before { content: counter(mission); font-family: var(--font-mono); color: var(--color-text-muted); }
+  .board { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem 2rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); color: var(--color-text-muted); }
+  @media (min-width: 900px) {
+    .about { grid-template-columns: 14rem 1fr; }
+  }
+</style>

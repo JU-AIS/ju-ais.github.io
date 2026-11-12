@@ -9,33 +9,23 @@ interface Props {
 }
 
 const { event, widths, sizes } = Astro.props;
-const { cover, coverAlt, title, type } = event.data;
+const { cover, coverAlt } = event.data;
 ---
 
 {
   cover ? (
     <Image src={cover} alt={coverAlt ?? ''} widths={widths} sizes={sizes} class="cover" />
   ) : (
-    <div class="cover cover--placeholder" aria-hidden="true">
-      <span class="label">{type}</span>
-      <span class="cover__title">{title}</span>
-    </div>
+    <div class="cover cover--placeholder" aria-hidden="true" />
   )
 }
 
 <style>
   .cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
   .cover--placeholder {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.4rem;
-    padding: 1.25rem;
-    overflow: hidden;
-    color: var(--color-text-on-dark);
-    background: var(--color-bg-dark);
+    background-color: var(--color-bg-soft);
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-text-on-dark) 30%, transparent) 1.1px, transparent 1.6px);
+    background-size: 24px 24px;
+    background-position: center;
   }
-  .cover--placeholder .label { color: color-mix(in srgb, var(--color-text-on-dark) 60%, transparent); }
-  .cover__title { font-family: var(--font-heading); font-size: 1.6rem; line-height: 1.1; }
 </style>

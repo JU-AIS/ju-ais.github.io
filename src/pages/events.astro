@@ -15,7 +15,7 @@ const { upcoming, past } = await getEvents();
     </div>
   </section>
 
-  <section class="section section--soft">
+  <section class="section">
     <div class="container">
       <h2 class="reveal">Upcoming</h2>
       {upcoming.length > 0 ? <EventList events={upcoming} /> : <p>New events are coming soon. Join to hear first.</p>}

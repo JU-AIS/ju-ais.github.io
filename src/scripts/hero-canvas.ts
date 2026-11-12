@@ -1,14 +1,24 @@
-interface Particle {
+interface Dot {
+  homeX: number;
+  homeY: number;
   x: number;
   y: number;
   vx: number;
   vy: number;
-  depth: number;
-  alpha: number;
+  glow: number;
 }
 
-const POINTER_RADIUS = 180;
-const BASE_SPEED = 18;
+interface Ripple {
+  x: number;
+  y: number;
+  start: number;
+}
+
+const POINTER_RADIUS = 140;
+const RIPPLE_SPEED = 520;
+const RIPPLE_LIFE = 2.2;
+const SPRING = 90;
+const DAMPING = 9;
 
 function cssColor(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -28,8 +38,10 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
 
   let width = 0;
   let height = 0;
-  let particles: Particle[] = [];
-  const pointer = { x: 0, y: 0, vx: 0, vy: 0, active: false };
+  let dots: Dot[] = [];
+  let ripples: Ripple[] = [];
+  const pointer = { x: 0, y: 0, active: false };
+  let lastInput = 0;
   let running = false;
   let visible = true;
   let frame = 0;
@@ -43,94 +55,92 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx!.lineCap = 'round';
 
-    const count = Math.round(Math.min(700, (width * height) / 2200));
-    particles = Array.from({ length: count }, () => {
-      const depth = 0.3 + Math.random() * 0.7;
-      return {
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: 0,
-        vy: 0,
-        depth,
-        alpha: (0.15 + Math.random() * 0.45) * depth,
-      };
-    });
-  }
-
-  // Smooth, slowly shifting current that every particle drifts along.
-  function flowAngle(x: number, y: number, time: number): number {
-    return Math.sin(x * 0.0025 + time * 0.15) * Math.cos(y * 0.003 - time * 0.1) * Math.PI - Math.PI / 2.4;
+    const gap = width < 720 ? 24 : 28;
+    const cols = Math.ceil(width / gap) + 1;
+    const rows = Math.ceil(height / gap) + 1;
+    const offsetX = (width - (cols - 1) * gap) / 2;
+    const offsetY = (height - (rows - 1) * gap) / 2;
+    dots = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const x = offsetX + col * gap;
+        const y = offsetY + row * gap;
+        dots.push({ homeX: x, homeY: y, x, y, vx: 0, vy: 0, glow: 0 });
+      }
+    }
   }
 
   function step(delta: number, time: number): void {
-    for (const p of particles) {
-      const angle = flowAngle(p.x, p.y, time);
-      const speed = BASE_SPEED * p.depth;
-      p.vx += (Math.cos(angle) * speed - p.vx) * 0.02;
-      p.vy += (Math.sin(angle) * speed - p.vy) * 0.02;
+    ripples = ripples.filter((r) => time - r.start < RIPPLE_LIFE);
+
+    for (const dot of dots) {
+      let fx = (dot.homeX - dot.x) * SPRING - dot.vx * DAMPING;
+      let fy = (dot.homeY - dot.y) * SPRING - dot.vy * DAMPING;
+      let excite = 0;
 
       if (pointer.active) {
-        const dx = p.x - pointer.x;
-        const dy = p.y - pointer.y;
+        const dx = dot.homeX - pointer.x;
+        const dy = dot.homeY - pointer.y;
         const dist = Math.hypot(dx, dy) || 1;
         if (dist < POINTER_RADIUS) {
           const force = (1 - dist / POINTER_RADIUS) ** 2;
-          // Swirl around the cursor, push away a little and get dragged along with its movement.
-          p.vx += (-dy / dist * 140 + dx / dist * 60) * force * delta * p.depth;
-          p.vy += (dx / dist * 140 + dy / dist * 60) * force * delta * p.depth;
-          p.vx += pointer.vx * force * 1.2;
-          p.vy += pointer.vy * force * 1.2;
+          fx += (dx / dist) * force * 2600;
+          fy += (dy / dist) * force * 2600;
+          excite = Math.max(excite, force);
         }
       }
 
-      p.x += p.vx * delta;
-      p.y += p.vy * delta;
-
-      if (p.x < -10) p.x += width + 20;
-      else if (p.x > width + 10) p.x -= width + 20;
-      if (p.y < -10) p.y += height + 20;
-      else if (p.y > height + 10) p.y -= height + 20;
-    }
-    pointer.vx *= 0.85;
-    pointer.vy *= 0.85;
-  }
-
-  function draw(): void {
-    ctx!.clearRect(0, 0, width, height);
-    for (const p of particles) {
-      const speed = Math.hypot(p.vx, p.vy);
-      const tail = Math.min(speed * 0.12, 18);
-      const glow = Math.min(speed / 120, 0.5);
-      ctx!.strokeStyle = `rgba(${rgb}, ${Math.min(p.alpha + glow, 0.9)})`;
-      ctx!.lineWidth = 0.8 + p.depth * 2.2;
-      ctx!.beginPath();
-      ctx!.moveTo(p.x - (p.vx / (speed || 1)) * tail, p.y - (p.vy / (speed || 1)) * tail);
-      ctx!.lineTo(p.x + 0.01, p.y);
-      ctx!.stroke();
-    }
-  }
-
-  function ripple(x: number, y: number): void {
-    for (const p of particles) {
-      const dx = p.x - x;
-      const dy = p.y - y;
-      const dist = Math.hypot(dx, dy) || 1;
-      if (dist < 260) {
-        const force = (1 - dist / 260) * 220 * p.depth;
-        p.vx += (dx / dist) * force;
-        p.vy += (dy / dist) * force;
+      for (const ripple of ripples) {
+        const age = time - ripple.start;
+        const dx = dot.homeX - ripple.x;
+        const dy = dot.homeY - ripple.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const front = Math.exp(-(((dist - age * RIPPLE_SPEED) / 26) ** 2)) * (1 - age / RIPPLE_LIFE);
+        if (front > 0.01) {
+          fx += (dx / dist) * front * 3200;
+          fy += (dy / dist) * front * 3200;
+          excite = Math.max(excite, front);
+        }
       }
+
+      dot.vx += fx * delta;
+      dot.vy += fy * delta;
+      dot.x += dot.vx * delta;
+      dot.y += dot.vy * delta;
+      dot.glow += (excite - dot.glow) * Math.min(delta * 10, 1);
     }
+  }
+
+  function draw(time: number): void {
+    ctx!.clearRect(0, 0, width, height);
+    for (const dot of dots) {
+      // A slow diagonal wave of light keeps the grid alive when nobody touches it.
+      const wave = 0.5 + 0.5 * Math.sin(dot.homeX * 0.006 + dot.homeY * 0.004 - time * 0.8);
+      const alpha = 0.16 + wave * 0.2 + dot.glow * 0.7;
+      const radius = 1.1 + dot.glow * 1.6;
+      ctx!.fillStyle = `rgba(${rgb}, ${alpha})`;
+      ctx!.beginPath();
+      ctx!.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
+      ctx!.fill();
+    }
+  }
+
+  function addRipple(x: number, y: number): void {
+    ripples.push({ x, y, start: performance.now() / 1000 });
   }
 
   function tick(now: number): void {
     if (!running) return;
-    const delta = Math.min((now - last) / 1000, 0.05);
+    const delta = Math.min((now - last) / 1000, 0.033);
     last = now;
-    step(delta, now / 1000);
-    draw();
+    const time = now / 1000;
+    if (time - lastInput > 4.5) {
+      addRipple(width * (0.5 + Math.random() * 0.45), height * (0.2 + Math.random() * 0.6));
+      lastInput = time;
+    }
+    step(delta, time);
+    draw(time);
     frame = requestAnimationFrame(tick);
   }
 
@@ -147,10 +157,10 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   }
 
   setup();
-  draw();
+  draw(0);
 
   if (reducedMotion) {
-    window.addEventListener('resize', () => { setup(); draw(); });
+    window.addEventListener('resize', () => { setup(); draw(0); });
     return;
   }
 
@@ -168,21 +178,20 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   });
 
   const host = canvas.parentElement!;
-  host.addEventListener('pointermove', (e) => {
+  const toLocal = (e: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    if (pointer.active) {
-      pointer.vx = x - pointer.x;
-      pointer.vy = y - pointer.y;
-    }
-    Object.assign(pointer, { x, y, active: true });
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+  host.addEventListener('pointermove', (e) => {
+    Object.assign(pointer, toLocal(e), { active: true });
+    lastInput = performance.now() / 1000;
   });
   host.addEventListener('pointerleave', () => (pointer.active = false));
   host.addEventListener('pointerdown', (e) => {
     if ((e.target as HTMLElement).closest('a, button')) return;
-    const rect = canvas.getBoundingClientRect();
-    ripple(e.clientX - rect.left, e.clientY - rect.top);
+    const { x, y } = toLocal(e);
+    addRipple(x, y);
+    lastInput = performance.now() / 1000;
   });
 
   play();
