@@ -12,10 +12,7 @@ import { config } from '../config';
       No background needed.
     </p>
     <div class="hero__actions">
-      <div class="hero__join">
-        <a href={config.joinUrl} class="btn btn--primary" target="_blank" rel="noopener">Join for free</a>
-        <span class="hero__note">Free this semester · 30 seconds</span>
-      </div>
+      <a href={config.joinUrl} class="btn btn--primary hero__join" target="_blank" rel="noopener">Join now</a>
       <a href={config.discordUrl} class="text-link" target="_blank" rel="noopener">Join our Discord →</a>
     </div>
   </div>
@@ -44,10 +41,8 @@ import { config } from '../config';
   .hero h1 { max-width: 12ch; margin-bottom: 1.5rem; }
   .hero h1 em { color: var(--color-accent); }
   .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.3rem); opacity: 0.88; margin-bottom: 2.5rem; }
-  .hero__actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.5rem 2.5rem; }
-  .hero__join { display: grid; gap: 0.6rem; justify-items: start; }
-  .hero__join .btn { min-height: 56px; padding-inline: 2.2em; font-size: 1rem; }
-  .hero__note { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+  .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; }
+  .hero__join { min-height: 56px; padding-inline: 2.2em; font-size: 1rem; }
   .hero .text-link { padding-block: 1rem; }
   .hero .text-link:hover { color: var(--color-accent); }
 
@@ -55,7 +50,7 @@ import { config } from '../config';
     .hero { align-items: flex-end; }
     .hero::after { background: linear-gradient(0deg, var(--color-bg-dark) 15%, color-mix(in srgb, var(--color-bg-dark) 55%, transparent) 60%, transparent 100%); }
     .hero__content { padding-block: 3rem; }
-    .hero__join { width: 100%; justify-items: stretch; text-align: center; }
+    .hero__join { width: 100%; }
   }
 </style>
 
