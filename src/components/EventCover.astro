@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import type { Event } from '../lib/events';
+
+interface Props {
+  event: Event;
+  widths: number[];
+  sizes: string;
+}
+
+const { event, widths, sizes } = Astro.props;
+const { cover, coverAlt, title, type } = event.data;
+---
+
+{
+  cover ? (
+    <Image src={cover} alt={coverAlt ?? ''} widths={widths} sizes={sizes} class="cover" />
+  ) : (
+    <div class="cover cover--placeholder" aria-hidden="true">
+      <span class="label">{type}</span>
+      <span class="cover__title">{title}</span>
+    </div>
+  )
+}
+
+<style>
+  .cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .cover--placeholder {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    padding: 1.25rem;
+    overflow: hidden;
+    color: var(--color-text-on-dark);
+    background:
+      radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--color-accent) 45%, transparent) 0, transparent 38%),
+      radial-gradient(ellipse 70% 40% at 78% 30%, transparent 60%, color-mix(in srgb, var(--color-accent) 30%, transparent) 61%, transparent 63%),
+      linear-gradient(135deg, var(--color-bg-dark), var(--color-primary));
+  }
+  .cover--placeholder .label { color: var(--color-accent); }
+  .cover__title { font-family: var(--font-heading); font-size: 1.6rem; line-height: 1.1; }
+</style>
