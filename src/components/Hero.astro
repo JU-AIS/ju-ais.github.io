@@ -61,23 +61,23 @@ const { nextEvent } = Astro.props;
   .hero__content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: 5rem; }
   .hero__eyebrow { margin-bottom: 1.5rem; }
   .hero h1 { max-width: 12ch; margin-bottom: 1.5rem; }
-  .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.25rem); opacity: 0.8; margin-bottom: 2.5rem; }
+  .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.25rem); color: var(--color-text-muted); margin-bottom: 2.5rem; }
   .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; }
   .hero__join { min-height: 52px; padding-inline: 2em; }
-  .hero .text-link { padding-block: 1rem; opacity: 0.8; }
-  .hero .text-link:hover { opacity: 1; }
+  .hero .text-link { padding-block: 1rem; }
 
   .hero__next {
     display: block;
     text-decoration: none;
-    border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 15%, transparent);
-    background: var(--color-bg-dark);
+    border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 25%, transparent);
+    background: var(--color-bg-soft);
     transition: background-color 0.2s ease;
   }
-  .hero__next:hover { background: color-mix(in srgb, var(--color-text-on-dark) 5%, var(--color-bg-dark)); }
-  .hero__next-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; padding-block: 1.25rem; }
-  .hero__next-title { font-family: var(--font-heading); font-size: 1.25rem; }
-  .hero__next-meta { font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.7; }
+  .hero__next:hover { background: color-mix(in srgb, var(--color-text-on-dark) 6%, var(--color-bg-soft)); }
+  .hero__next-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; padding-block: 1.5rem; }
+  .hero__next .label { color: var(--color-accent); }
+  .hero__next-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; }
+  .hero__next-meta { font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-text-muted); }
   .hero__next-arrow { margin-left: auto; }
 
   @media (max-width: 720px) {
