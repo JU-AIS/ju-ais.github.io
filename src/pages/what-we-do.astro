@@ -68,10 +68,10 @@ const activities = [
   .meter { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px; width: fit-content; }
   .meter span { width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--color-text) 24%, transparent); }
   .meter .on { transition: background-color 0.3s ease, transform 0.3s ease; transition-delay: calc(var(--i) * 18ms + 200ms); }
-  .is-visible .meter .on, .no-js .meter .on { background: var(--color-text); }
+  .is-visible .meter .on, .no-js .meter .on { background: var(--color-accent); }
   .activity:hover .meter .on { transform: scale(1.4); transition-delay: calc(var(--i) * 6ms); }
 
   @media (prefers-reduced-motion: reduce) {
-    .meter .on { background: var(--color-text); transition: none; }
+    .meter .on { background: var(--color-accent); transition: none; }
   }
 </style>

@@ -34,7 +34,7 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   if (!ctx) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rgb = toRgb(cssColor('--color-text-on-dark'));
+  const rgb = toRgb(cssColor('--color-accent'));
 
   let width = 0;
   let height = 0;

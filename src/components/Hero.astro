@@ -69,14 +69,14 @@ const { nextEvent } = Astro.props;
     display: block;
     text-decoration: none;
     border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 25%, transparent);
-    background: var(--color-bg-soft);
+    background: var(--color-primary);
     transition: background-color 0.2s ease;
   }
-  .hero__next:hover { background: color-mix(in srgb, var(--color-text-on-dark) 6%, var(--color-bg-soft)); }
+  .hero__next:hover { background: var(--color-secondary); }
   .hero__next-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; padding-block: 1.5rem; }
   .hero__next .label { color: var(--color-accent); }
   .hero__next-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; }
-  .hero__next-meta { font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-text-muted); }
+  .hero__next-meta { font-family: var(--font-mono); font-size: 0.9rem; }
   .hero__next-arrow { margin-left: auto; }
 
   @media (max-width: 720px) {
