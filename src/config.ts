@@ -4,7 +4,7 @@ export const config = {
   shortName: 'JU AIS',
   joinUrl: 'https://forms.gle/PLACEHOLDER',
   discordUrl: 'https://discord.gg/PLACEHOLDER',
-  email: 'placeholder@example.com',
-  partnerEmail: 'placeholder@example.com',
+  email: 'ju.ai.student.association@gmail.com',
+  partnerEmail: 'ju.ai.student.association@gmail.com',
   timeZone: 'Europe/Stockholm',
 };
