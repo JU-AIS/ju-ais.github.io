@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { config } from '../config';
+
+const offers = [
+  { title: 'Events', text: 'Host a build night or workshop with your tools, your data or your challenge.' },
+  { title: 'Talks', text: 'Tell students what you build with AI and what it takes to work with you.' },
+  { title: 'Hackathon sponsoring', text: 'Put your name and your problem at the centre of a hackathon or buildathon.' },
+  { title: 'Access to students', text: 'Meet motivated students from all four schools at JU, from engineering to business and health.' },
+];
+
+const mailto = `mailto:${config.partnerEmail}?subject=${encodeURIComponent(`Partnership with ${config.shortName}`)}`;
+---
+
+<Layout title="Partners" description="Partner with the AI student association at Jönköping University.">
+  <section class="section section--dark page-head on-dark">
+    <div class="container">
+      <p class="label">For companies</p>
+      <h1>Meet the next generation of <em>AI builders.</em></h1>
+      <p class="page-head__lead">
+        We bring students from every school at Jönköping University together to learn and build with AI. Partner with us
+        to reach them, share what you do and shape what they build.
+      </p>
+      <a href={mailto} class="btn btn--primary partners__cta">Get in touch</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="label reveal">What we offer</p>
+      <h2 class="reveal">Ways to work with us</h2>
+      <ul class="partner-offers">
+        {
+          offers.map((offer) => (
+            <li class="reveal">
+              <h3>{offer.title}</h3>
+              <p>{offer.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container partners__end reveal">
+      <h2>Let's build something together.</h2>
+      <a href={mailto} class="btn btn--primary">Get in touch</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .partners__cta { margin-top: 2.25rem; }
+  .partner-offers { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 0 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  .partner-offers li { padding-block: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent); }
+  .partner-offers p { margin: 0; color: var(--color-text-muted); }
+  .partners__end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .partners__end h2 { margin: 0; }
+</style>

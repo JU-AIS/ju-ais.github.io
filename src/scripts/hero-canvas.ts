@@ -81,7 +81,7 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   }
 
   function center(): { cx: number; cy: number } {
-    return { cx: width * (width < 720 ? 0.5 : 0.62), cy: height * 0.5 };
+    return width < 720 ? { cx: width * 0.6, cy: height * 0.22 } : { cx: width * 0.62, cy: height * 0.5 };
   }
 
   function place(node: Node, cx: number, cy: number): void {

@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import EventList from '../components/EventList.astro';
+import JoinCta from '../components/JoinCta.astro';
+import { getEvents } from '../lib/events';
+
+const { upcoming, past } = await getEvents();
+---
+
+<Layout title="Events" description="Upcoming and past events from the AI student association at Jönköping University.">
+  <section class="section section--dark page-head">
+    <div class="container">
+      <p class="label">Events</p>
+      <h1>Build, learn, <em>battle.</em></h1>
+      <p class="page-head__lead">Build nights, workshops, talks and competitions. Open to every JU student.</p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container">
+      <h2 class="reveal">Upcoming</h2>
+      {upcoming.length > 0 ? <EventList events={upcoming} /> : <p>New events are coming soon. Join to hear first.</p>}
+    </div>
+  </section>
+
+  {
+    past.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <h2 class="reveal">Past events</h2>
+          <EventList events={past} />
+        </div>
+      </section>
+    )
+  }
+
+  <JoinCta />
+</Layout>

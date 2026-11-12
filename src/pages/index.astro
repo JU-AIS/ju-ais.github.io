@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import EventList from '../components/EventList.astro';
+import JoinCta from '../components/JoinCta.astro';
+import { getEvents } from '../lib/events';
+
+const { upcoming } = await getEvents();
+const nextEvents = upcoming.slice(0, 3);
+
+const offers = [
+  { title: 'Build events', text: 'Build nights and hackathons where you ship something real with AI in a single evening or weekend.' },
+  { title: 'Workshops', text: 'A beginner track to get started, and a builder track for those who want to go deeper.' },
+  { title: 'Talks & companies', text: 'Meet the people using AI in industry, hear what they work on and how to get there.' },
+  { title: 'Projects & research', text: 'Join a team, work on a longer project or explore AI research together with others.' },
+];
+---
+
+<Layout>
+  <Hero />
+
+  <section class="section">
+    <div class="container">
+      <p class="label reveal">What you get</p>
+      <h2 class="reveal">Learn it. Build it. <em>Meet the people</em> behind it.</h2>
+      <ul class="offers">
+        {
+          offers.map((offer, i) => (
+            <li class="offer reveal" style={`transition-delay: ${i * 80}ms`}>
+              <span class="label">0{i + 1}</span>
+              <h3>{offer.title}</h3>
+              <p>{offer.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="label reveal">Upcoming events</p>
+          <h2 class="reveal">What's next</h2>
+        </div>
+        <a href="/events" class="text-link reveal">See all →</a>
+      </div>
+      {nextEvents.length > 0 ? <EventList events={nextEvents} /> : <p>New events are coming soon. Join to hear first.</p>}
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container about">
+      <p class="label reveal">About us</p>
+      <p class="about__text reveal">
+        JU AIS is a student-led non-profit at Jönköping University. We grow AI literacy across all four schools and give
+        students a place to build real things with AI outside the classroom: projects, research, build nights, workshops
+        and talks with companies. <em>No programming or AI background needed.</em> Our goal is to form the next generation
+        of AI builders and leaders at JU, and to bridge academia and industry along the way.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <a href="/partners" class="container partner-teaser reveal">
+      <span>
+        <span class="label">For companies</span>
+        <span class="partner-teaser__title">Are you a company? Partner with us</span>
+      </span>
+      <span class="partner-teaser__arrow" aria-hidden="true">→</span>
+    </a>
+  </section>
+
+  <JoinCta />
+</Layout>
+
+<style>
+  h2 em { color: var(--color-primary); }
+  .offers { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+  .offer {
+    padding: 2rem 1.6rem;
+    border-radius: 18px;
+    background: var(--color-bg-soft);
+    border: 1px solid transparent;
+    transition: border-color 0.3s ease, transform 0.3s ease, opacity 0.8s ease;
+  }
+  .offer:hover { border-color: color-mix(in srgb, var(--color-primary) 35%, transparent); transform: translateY(-4px); }
+  .offer .label { display: block; margin-bottom: 2.5rem; }
+  .offer p { margin: 0; color: var(--color-text-muted); }
+
+  .section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2.5rem; }
+  .section-head h2 { margin: 0; }
+
+  .about { max-width: 52rem; }
+  .about__text { font-family: var(--font-heading); font-size: clamp(1.35rem, 3vw, 1.9rem); line-height: 1.45; margin: 1.25rem 0 0; }
+  .about__text em { color: var(--color-primary); }
+
+  .partner-teaser {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1rem;
+    text-decoration: none;
+  }
+  .partner-teaser .label { display: block; margin-bottom: 0.75rem; }
+  .partner-teaser__title { font-family: var(--font-heading); font-size: clamp(1.7rem, 4.5vw, 3rem); line-height: 1.15; }
+  .partner-teaser__arrow {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: clamp(56px, 10vw, 88px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-text-on-dark);
+    font-size: 1.6rem;
+    transition: transform 0.3s ease;
+  }
+  .partner-teaser:hover .partner-teaser__arrow { transform: translateX(8px) rotate(-8deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .offer, .partner-teaser__arrow { transition: none; }
+  }
+</style>
