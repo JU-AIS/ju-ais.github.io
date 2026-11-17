@@ -4,9 +4,9 @@ import { z } from 'astro/zod';
 
 const events = defineCollection({
   loader: glob({
-    pattern: '*/index.md',
+    pattern: ['*/index.md', 'hitract/*/index.md'],
     base: './src/content/events',
-    generateId: ({ entry }) => entry.split('/')[0],
+    generateId: ({ entry }) => entry.split('/').at(-2)!,
   }),
   schema: ({ image }) =>
     z.object({
@@ -18,6 +18,8 @@ const events = defineCollection({
       coverAlt: z.string().nullish(),
       signup: z.url().nullish(),
       photos: z.array(image()).nullish(),
+      hitractId: z.number().nullish(),
+      hitractImageId: z.number().nullish(),
     }),
 });
 

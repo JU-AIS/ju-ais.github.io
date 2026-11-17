@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    # Nightly rebuild so finished events move to "Past events" (01:00 UTC).
+    # Nightly: fetch events from HiTract and move finished events to "Past events" (01:00 UTC).
     - cron: '0 1 * * *'
   workflow_dispatch:
 
@@ -27,7 +27,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Sync events from HiTract
+        run: npm run sync:events
       - run: npm run build
+      - name: Publish SBOM
+        run: npm run --silent sbom > dist/sbom.cdx.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

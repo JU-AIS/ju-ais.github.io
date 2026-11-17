@@ -4,3 +4,7 @@ dist/
 .DS_Store
 .env
 .env.*
+test-results/
+playwright-report/
+src/content/events/hitract/*
+!src/content/events/hitract/.gitkeep

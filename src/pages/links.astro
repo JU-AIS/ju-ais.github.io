@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { config } from '../config';
+import { formatDate, getEvents } from '../lib/events';
+
+const { upcoming } = await getEvents();
+const nextEvent = upcoming[0];
+
+const links = [
+  { label: 'Join for free', href: config.joinUrl, primary: true, external: true },
+  ...(nextEvent
+    ? [{ label: `${nextEvent.data.title} · ${formatDate(nextEvent.data.date)}`, href: `/events#${nextEvent.id}` }]
+    : []),
+  { label: 'Join our Discord', href: config.discordUrl, external: true },
+  { label: 'Website', href: '/' },
+  { label: 'For companies', href: '/partners' },
+  { label: 'Email us', href: `mailto:${config.email}` },
+];
+---
+
+<Layout title="Links" bare>
+  <section class="links">
+    <img src="/logo-dark.svg" alt="" width="88" height="88" class="links__logo" />
+    <h1>{config.shortName}</h1>
+    <p class="links__lead">{config.name}</p>
+    <ul>
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class:list={['links__btn', { 'links__btn--primary': link.primary }]}
+              {...(link.external && { target: '_blank', rel: 'noopener' })}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .links {
+    min-height: 100svh;
+    width: min(480px, 100% - 2rem);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 10vh, 6rem) 3rem;
+    text-align: center;
+  }
+  .links__logo { margin: 0 auto 1.25rem; border-radius: 18px; }
+  .links h1 { font-size: 2.4rem; margin-bottom: 0.25rem; }
+  .links__lead { color: var(--color-text-muted); margin-bottom: 2.25rem; }
+  .links ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
+  .links__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 0.9rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-text) 30%, transparent);
+    border-radius: 6px;
+    background: var(--color-bg-soft);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .links__btn:hover { border-color: var(--color-text); }
+  .links__btn--primary { background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
+  .links__btn--primary:hover { background: color-mix(in srgb, var(--color-accent), white 40%); }
+  @media (prefers-reduced-motion: reduce) {
+    .links__btn { transition: none; }
+  }
+</style>

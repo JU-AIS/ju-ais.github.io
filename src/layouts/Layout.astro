@@ -8,11 +8,13 @@ import { config } from '../config';
 interface Props {
   title?: string;
   description?: string;
+  bare?: boolean;
 }
 
 const {
   title,
   description = 'A student-led AI association at Jönköping University. Open to all students, no background needed.',
+  bare = false,
 } = Astro.props;
 const fullTitle = title ? `${title} · ${config.shortName}` : config.name;
 ---
@@ -34,11 +36,11 @@ const fullTitle = title ? `${title} · ${config.shortName}` : config.name;
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
   </head>
   <body>
-    <Navbar />
+    {!bare && <Navbar />}
     <main>
       <slot />
     </main>
-    <Footer />
+    {!bare && <Footer />}
     <script>
       const observer = new IntersectionObserver(
         (entries) => {
