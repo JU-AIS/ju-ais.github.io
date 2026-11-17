@@ -49,6 +49,16 @@ See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
 
 `main` is protected: changes go through a pull request, and the CI workflow (`test`) must pass before merging. Merging deploys the site. Requires repo Settings → Pages → Source: GitHub Actions.
 
+## Icons
+
+`src/icons/` (rendered white via `currentColor`, unmodified shapes).
+
+| Icon | Source | License / terms |
+|---|---|---|
+| Discord, Instagram | [Simple Icons](https://simpleicons.org) | CC0. Logos are trademarks; Discord's and Meta's brand guidelines allow them, unmodified in white/black, to link to our own server/profile. |
+| LinkedIn | Simple Icons v8 (removed in later versions) | CC0. LinkedIn's brand guidelines allow the "in" logo in white/black to link to our own page. |
+| Email | [Material Icons](https://fonts.google.com/icons) `mail` | Apache License 2.0, © Google. |
+
 ## Maintenance
 
 | What | Why |

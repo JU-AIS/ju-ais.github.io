@@ -1,0 +1,43 @@
+---
+import { config } from '../config';
+import Discord from '../icons/discord.svg';
+import Instagram from '../icons/instagram.svg';
+import LinkedIn from '../icons/linkedin.svg';
+import Mail from '../icons/mail.svg';
+
+const links = [
+  { label: 'Discord', href: config.discordUrl, Icon: Discord },
+  { label: 'Instagram', href: config.instagramUrl, Icon: Instagram },
+  { label: 'LinkedIn', href: config.linkedinUrl, Icon: LinkedIn },
+  { label: 'Email', href: `mailto:${config.email}`, Icon: Mail },
+];
+---
+
+<ul class="social">
+  {
+    links.map(({ label, href, Icon }) => (
+      <li>
+        <a href={href} aria-label={label} title={label} {...(!href.startsWith('mailto:') && { target: '_blank', rel: 'noopener' })}>
+          <Icon width={22} height={22} aria-hidden="true" />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.5rem; }
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  .social a:hover { opacity: 0.75; }
+  .social :global(svg) { fill: currentColor; }
+  @media (prefers-reduced-motion: reduce) {
+    .social a { transition: none; }
+  }
+</style>
