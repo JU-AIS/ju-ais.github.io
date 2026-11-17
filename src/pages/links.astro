@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { config } from '../config';
+import SocialLinks from '../components/SocialLinks.astro';
 import { formatDate, getEvents } from '../lib/events';
 
 const { upcoming } = await getEvents();
@@ -38,6 +39,9 @@ const links = [
         ))
       }
     </ul>
+    <div class="links__social">
+      <SocialLinks />
+    </div>
   </section>
 </Layout>
 
@@ -69,6 +73,7 @@ const links = [
     transition: border-color 0.2s ease, background-color 0.2s ease;
   }
   .links__btn:hover { border-color: var(--color-text); }
+  .links__social { display: flex; justify-content: center; margin-top: 1.75rem; }
   .links__btn--primary { background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
   .links__btn--primary:hover { background: color-mix(in srgb, var(--color-accent), white 40%); }
   @media (prefers-reduced-motion: reduce) {

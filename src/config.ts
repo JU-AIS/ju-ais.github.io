@@ -4,6 +4,8 @@ export const config = {
   shortName: 'JU AIS',
   joinUrl: 'https://hitract.se/hitclub/ju-ai-student-association/hitmemberships#membership-list',
   discordUrl: 'https://discord.gg/Jr8uSpJt4S',
+  instagramUrl: 'https://www.instagram.com/juaistudentassociation/',
+  linkedinUrl: 'https://www.linkedin.com/company/ju-ai-student-association/',
   email: 'ju.ai.student.association@gmail.com',
   partnerEmail: 'ju.ai.student.association@gmail.com',
   timeZone: 'Europe/Stockholm',

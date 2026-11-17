@@ -1,6 +1,7 @@
 ---
 import { config } from '../config';
 import { formatDate, type Event } from '../lib/events';
+import DiscordIcon from '../icons/discord.svg';
 
 interface Props {
   nextEvent?: Event;
@@ -19,7 +20,9 @@ const { nextEvent } = Astro.props;
     </p>
     <div class="hero__actions">
       <a href={config.joinUrl} class="btn btn--primary hero__join" target="_blank" rel="noopener">Join now</a>
-      <a href={config.discordUrl} class="text-link" target="_blank" rel="noopener">Discord →</a>
+      <a href={config.discordUrl} class="text-link hero__discord" target="_blank" rel="noopener">
+        <DiscordIcon width={20} height={20} aria-hidden="true" />Discord →
+      </a>
     </div>
   </div>
   {
@@ -64,6 +67,8 @@ const { nextEvent } = Astro.props;
   .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; }
   .hero__join { min-height: 52px; padding-inline: 2em; }
   .hero .text-link { padding-block: 1rem; }
+  .hero__discord { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .hero__discord :global(svg) { fill: currentColor; flex-shrink: 0; }
 
   .hero__next {
     display: block;
