@@ -24,17 +24,12 @@ function cssColor(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function toRgb(hex: string): string {
-  const value = hex.replace('#', '');
-  return [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16)).join(', ');
-}
-
 export function startHeroCanvas(canvas: HTMLCanvasElement): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rgb = toRgb(cssColor('--color-accent'));
+  const color = cssColor('--color-accent');
 
   let width = 0;
   let height = 0;
@@ -114,12 +109,14 @@ export function startHeroCanvas(canvas: HTMLCanvasElement): void {
 
   function draw(time: number): void {
     ctx!.clearRect(0, 0, width, height);
+    // Any CSS color format works here; browsers and extensions may report the variable as rgb() instead of hex.
+    ctx!.fillStyle = color;
     for (const dot of dots) {
       // A slow diagonal wave of light keeps the grid alive when nobody touches it.
       const wave = 0.5 + 0.5 * Math.sin(dot.homeX * 0.006 + dot.homeY * 0.004 - time * 0.8);
       const alpha = 0.28 + wave * 0.24 + dot.glow * 0.5;
       const radius = 1.1 + dot.glow * 1.6;
-      ctx!.fillStyle = `rgba(${rgb}, ${alpha})`;
+      ctx!.globalAlpha = Math.min(alpha, 1);
       ctx!.beginPath();
       ctx!.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
       ctx!.fill();
