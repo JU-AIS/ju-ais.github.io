@@ -18,15 +18,15 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .footer { padding-block: 3.5rem 2.5rem; border-top: 1px solid var(--color-line-on-dark); }
+  .footer { padding-block: 3.5rem 2.5rem; border-top: 1px solid var(--color-line); }
   .footer__inner { display: grid; gap: 1.75rem; }
   .footer__brand { display: flex; align-items: center; gap: 0.9rem; }
-  .footer__brand img { border-radius: 10px; }
+  .footer__brand img { border-radius: var(--radius-logo); }
   .footer__brand p { margin: 0; font-size: 1.1rem; }
   .footer__links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
   .footer__links a, .footer__copy {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: var(--text-mono-sm);
     letter-spacing: 0.06em;
     text-underline-offset: 0.3em;
     overflow-wrap: anywhere;

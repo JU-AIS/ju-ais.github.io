@@ -10,6 +10,8 @@ const MARGIN = 3;
 const EYE = 7;
 // H tolerates ~30 % damage; the logo covers well under that.
 const LOGO_SHARE = 0.24;
+// Matches --radius-logo in theme.css, so the static logo has the same corners as on the site.
+const LOGO_RADIUS = 0.22;
 
 const isEye = (row: number, col: number, size: number) =>
   (row < EYE && col < EYE) || (row < EYE && col >= size - EYE) || (row >= size - EYE && col < EYE);
@@ -57,7 +59,8 @@ export function qrSvg(text: string, logo: string, colors: QrColors) {
     eye(MARGIN, MARGIN, colors.eyes) +
     eye(far, MARGIN, colors.eyes) +
     eye(MARGIN, far, colors.eyes) +
-    `<svg x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" viewBox="0 0 100 100">${logo}</svg>` +
+    `<clipPath id="qr-logo"><rect x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" rx="${logoSize * LOGO_RADIUS}"/></clipPath>` +
+    `<svg x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" viewBox="0 0 100 100" clip-path="url(#qr-logo)">${logo}</svg>` +
     `</svg>`;
 
   return { svg, logoBox: { start: logoAt / full, size: logoSize / full } };
