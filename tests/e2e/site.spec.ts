@@ -61,15 +61,16 @@ test('footer and links page link to Discord, Instagram, LinkedIn and email', asy
   }
 });
 
+test('footer links to GitHub and the QR page', async ({ page }) => {
+  await page.goto('/');
+  const footer = page.locator('footer');
+  await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', config.githubUrl);
+  await expect(footer.getByRole('link', { name: 'QR code' })).toHaveAttribute('href', '/qr');
+});
+
 test('partners page has a mailto link', async ({ page }) => {
   await page.goto('/partners');
   await expect(page.locator(`a[href^="mailto:${config.partnerEmail}"]`).first()).toBeVisible();
-});
-
-test('unknown path shows the 404 page with a home link', async ({ page }) => {
-  await page.goto('/this-page-does-not-exist');
-  await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
-  await expect(page.locator('.not-found').getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
 });
 
 for (const path of ['/qr', '/links/qr']) {
@@ -87,3 +88,9 @@ for (const path of ['/qr', '/links/qr']) {
     expect(svg).not.toContain('<animate');
   });
 }
+
+test('unknown path shows the 404 page with a home link', async ({ page }) => {
+  await page.goto('/this-page-does-not-exist');
+  await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+  await expect(page.locator('.not-found').getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
+});
