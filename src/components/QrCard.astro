@@ -167,7 +167,7 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     listen();
     if (typeof orientation.requestPermission === 'function') {
       // iOS only delivers sensor events after permission is granted from a user gesture.
-      document.addEventListener(
+      card.addEventListener(
         'click',
         () =>
           orientation.requestPermission!()
