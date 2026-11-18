@@ -80,9 +80,9 @@ All pairs pass AA. If a new color is proposed, these are the pairs to re-check.
 | Value | File | What | Changes with tokens? |
 |---|---|---|---|
 | `#1F1630` | `src/layouts/Layout.astro` (`theme-color` meta) | Browser toolbar color on mobile. Duplicate of `--color-bg-dark` | No, edit by hand |
-| `#FFFFFF` | `src/components/QrCard.astro` | QR code background | No |
-| `rgb(0 0 0 / 0.55)`, `rgb(0 0 0 / 0.6)` | `src/components/QrCard.astro` | QR card drop shadow | No (neutral black, fine) |
-| `rgb(255 255 255 / 0.35 → 0)` | `src/components/QrCard.astro` | QR card glare highlight | No (neutral white, fine) |
+| `#FFFFFF` | `src/components/QrCarousel.astro` | QR code background | No |
+| `rgb(0 0 0 / 0.55)`, `rgb(0 0 0 / 0.6)` | `src/components/QrCarousel.astro` | QR card drop shadow | No (neutral black, fine) |
+| `rgb(255 255 255 / 0.35 → 0)` | `src/components/QrCarousel.astro` | QR card glare highlight | No (neutral white, fine) |
 | `#4A2390`, `#1E1035`, `#C9B3F2`, `#FFFFFF` | `public/logo.svg`, `public/logo-dark.svg`, `public/favicon.svg` | Logo tile, orbits, nodes, spark | No, re-export the file |
 | raster | `public/favicon-96.png`, `public/apple-touch-icon.png` | Favicon PNGs | No, re-export the file |
 
@@ -108,7 +108,7 @@ Base: body `1.0625rem` (17px), line height 1.65. Mono sizes are tokens in `theme
 |---|---|---|---|
 | h1 (default, hero) | clamp(2.6rem, 8vw, 5.6rem) | heading 700 | `global.css` |
 | h1 page header | clamp(2.4rem, 7vw, 4.5rem), max 16 characters wide | heading | `global.css` `.page-head h1` |
-| h1 QR page | clamp(2rem, 7vw, 2.8rem) | heading | `QrCard.astro` |
+| h1 QR page | clamp(2rem, 7vw, 2.8rem) | heading | `QrCarousel.astro` |
 | h1 links page | 2.4rem | heading | `links.astro` |
 | h2 | clamp(1.8rem, 4vw, 2.6rem) | heading | `global.css` |
 | h2 home pitches | clamp(1.5rem, 2.6vw, 1.9rem) | heading | `index.astro` |
@@ -116,7 +116,7 @@ Base: body `1.0625rem` (17px), line height 1.65. Mono sizes are tokens in `theme
 | h3 | 1.35rem (2rem for a single featured event) | heading | `global.css`, `EventList.astro` |
 | Event cover day | clamp(3.5rem, 8vw, 6rem) | heading 700 | `EventCover.astro` |
 | Page lead | 1.2rem, muted | body | `global.css` `.page-head__lead` |
-| Hero "Next event" meta, QR lead | `--text-mono` 0.9rem | mono | `Hero.astro`, `QrCard.astro` |
+| Hero "Next event" meta, QR lead | `--text-mono` 0.9rem | mono | `Hero.astro`, `QrCarousel.astro` |
 | Hero lead | clamp(1.1rem, 2.4vw, 1.25rem), muted | body | `Hero.astro` |
 | About text | clamp(1.1rem, 2vw, 1.3rem) | body | `about.astro` |
 | Label `.label` | `--text-label` 0.78rem, 500, UPPERCASE, letter spacing 0.14em, accent | mono | `global.css` |
@@ -145,7 +145,7 @@ Current symbol is Growth's Orbit symbol (three orbits, three nodes, central spar
 | `src/icons/discord.svg` | Discord glyph | `currentColor` (inherits text color) | Hero "Discord →" link (20px), social row | Static |
 | `src/icons/instagram.svg`, `linkedin.svg`, `mail.svg` | Social glyphs | `currentColor` | Social row in footer and links page (22px in 44px tap target) | Static |
 | `src/icons/github.svg` | GitHub mark | `currentColor` | Footer social row only, after Email, links to the GitHub org | Static |
-| `src/icons/qr.svg` | QR glyph | `currentColor` | Footer social row only, after GitHub, links to `/qr` | Static |
+| `src/icons/qr.svg` | QR glyph | `currentColor` | Footer social row after GitHub (links to `/qr`), links page social row (links to `/links/qr`) | Static |
 
 Notes:
 - The QR page shows the animated logo, but **downloads always use the static `public/logo.svg`**.
@@ -172,7 +172,7 @@ Not tokens:
 | Element | Radius | Defined in |
 |---|---|---|
 | Logo tile inside the SVG files | 12% (clipped to 22% wherever shown) | `public/logo*.svg` |
-| QR card and QR code | 6% (scales with the image) | `QrCard.astro`, `src/lib/qr.ts` |
+| QR card and QR code | 6% (scales with the image) | `QrCarousel.astro`, `src/lib/qr.ts` |
 | QR eyes | outer 1.8, inner 0.9 (rounded squares) | `src/lib/qr.ts` |
 | Modal close button, QR dots, meter dots | circles (50%) | `EventList.astro`, `qr.ts`, `what-we-do.astro` |
 
@@ -252,16 +252,18 @@ Sticky, 68px tall, `--color-bg-dark`, `--color-line` bottom line. Left: `logo-da
 Dark section at the end of most pages: "Join JU AIS" h2, one muted line, primary button. Side by side on wide screens, stacked when narrow.
 
 ### Social links (`SocialLinks.astro`)
-Discord, Instagram, LinkedIn, Email icons at 22px inside 44px tap targets, inherit text color, 75% opacity on hover. Prop `footer` adds GitHub (`config.githubUrl`) and a QR icon (linking to `/qr`) after Email. Used in footer (with `footer`) and links page (without). Only `http` links open in a new tab.
+Discord, Instagram, LinkedIn, Email icons at 22px inside 44px tap targets, inherit text color, 75% opacity on hover. Prop `footer` adds GitHub (`config.githubUrl`) after Email; prop `qrHref` adds a QR icon linking there. Footer: GitHub + QR → `/qr`. Links page: QR → `/links/qr`. Only `http` links open in a new tab.
 
 ### Links page (`/links`, `links.astro`)
-Link-in-bio page with no navbar/footer (`bare` layout). Column max 480px, centered. Logo 88px with `--radius-logo`, h1 "JU AIS" 2.4rem, full name in muted. Buttons are `.btn` + `.links__btn` (full width, 1.25rem side padding), 48px: first button ("Join for free") `.btn--primary`, the rest `.btn--secondary`. Social row below (no GitHub or QR icon).
+Link-in-bio page with no navbar/footer (`bare` layout). Column max 480px, centered. Logo 88px with `--radius-logo`, h1 "JU AIS" 2.4rem, full name in muted. Buttons are `.btn` + `.links__btn` (full width, 1.25rem side padding), 48px: first button ("Join for free") `.btn--primary`, the rest `.btn--secondary`. Social row below (no GitHub; QR icon links to `/links/qr`).
 
-### QR pages (`/qr`, `/links/qr`, `QrCard.astro` + `src/lib/qr.ts`)
-No navbar/footer. Column max 520px. QR card max 380px with a 3D tilt that follows the pointer, 3D edge shadow and glare.
+### QR pages (`/qr`, `/links/qr`, `QrCarousel.astro` + `src/lib/qr.ts`)
+No navbar/footer. Column max 520px. QR card max 380px with a 3D tilt that follows the pointer (gyro on phones), 3D edge shadow and glare.
+- Carousel: one slide per entry in `src/lib/qr-codes.ts` (`title`, `href` as site path or full URL, `fileName`); adding an entry adds a slide and a dot. Swipe (CSS scroll-snap, scrollbar hidden), arrow keys or the dots below the card. Title, "Scan to open" line (one line, ellipsis if long) and buttons follow the active slide. `/qr` starts on the first slide, `/links/qr` on the links slide.
+- Dots: 8px pills in `--color-line-hover`, the active one 20px wide in `--color-accent`, inside 28px buttons.
 - QR style: white background (6% corners), round dots in `--color-ink`, rounded-square eyes in `--color-primary`, logo tile in `--color-primary` with `--radius-logo` corners covering 24% of the code (error correction H tolerates this).
 - Buttons: Download PNG (primary, 2048×2048), Download SVG and Copy link (`.btn--secondary`).
-- Downloads replace the tokens with real hex values and use the static `logo.svg`, clipped to 22% corners (`LOGO_RADIUS`).
+- Downloads (of the active slide) replace the tokens with real hex values and use the static `logo.svg`, clipped to 22% corners (`LOGO_RADIUS`). Each code gets its own clip path id (`qr-<index>-logo`) since all are inline on one page.
 
 ### 404 (`404.astro`)
 Dark page header (min 70% screen height): label "Error 404", h1, lead, primary button "Back to home" + text link to events. Animated OrbitLogo on the right (160–260px), above the text at 112px on mobile.
@@ -319,7 +321,7 @@ Common steps are 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2.25, 2.5rem.
 | Animated logo | 3.6s loop, spark beat every 1.8s | Hero, 404, QR |
 | QR tilt | 3D tilt follows the pointer, 0.5s ease back | QR pages |
 
-**Reduced motion** (`prefers-reduced-motion: reduce`): reveals show instantly, transitions and the modal animation turn off, meter dots are lit from the start, the animated logo pauses, the QR tilt is off and smooth scrolling is disabled. Without JavaScript, all `.reveal` content is visible.
+**Reduced motion** (`prefers-reduced-motion: reduce`): reveals show instantly, transitions and the modal animation turn off, meter dots are lit from the start, the animated logo pauses, the QR tilt is off, QR dots jump without smooth scrolling and smooth scrolling is disabled. Without JavaScript, all `.reveal` content is visible.
 
 ### 7.5 Focus
 Keyboard focus ring on every element: 2px solid `--color-accent`, 3px offset (`global.css`).

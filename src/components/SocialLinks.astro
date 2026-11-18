@@ -9,21 +9,18 @@ import Qr from '../icons/qr.svg';
 
 interface Props {
   footer?: boolean;
+  qrHref?: string;
 }
 
-const { footer = false } = Astro.props;
+const { footer = false, qrHref } = Astro.props;
 
 const links = [
   { label: 'Discord', href: config.discordUrl, Icon: Discord },
   { label: 'Instagram', href: config.instagramUrl, Icon: Instagram },
   { label: 'LinkedIn', href: config.linkedinUrl, Icon: LinkedIn },
   { label: 'Email', href: `mailto:${config.email}`, Icon: Mail },
-  ...(footer
-    ? [
-        { label: 'GitHub', href: config.githubUrl, Icon: GitHub },
-        { label: 'QR code', href: '/qr', Icon: Qr },
-      ]
-    : []),
+  ...(footer ? [{ label: 'GitHub', href: config.githubUrl, Icon: GitHub }] : []),
+  ...(qrHref ? [{ label: 'QR code', href: qrHref, Icon: Qr }] : []),
 ];
 ---
 

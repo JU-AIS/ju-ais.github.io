@@ -1,0 +1,367 @@
+---
+import { readFileSync } from 'node:fs';
+import { logoInner, qrSvg } from '../lib/qr';
+import { qrCodes } from '../lib/qr-codes';
+import OrbitLogo from './OrbitLogo.astro';
+
+interface Props {
+  start?: number;
+}
+
+const { start = 0 } = Astro.props;
+const logo = logoInner(readFileSync('public/logo.svg', 'utf8'));
+const slides = qrCodes.map(({ title, href, fileName }, i) => {
+  const url = new URL(href, Astro.site).href;
+  // CSS variables keep the brand swappable; the download script resolves them to real colors.
+  const { svg, logoBox } = qrSvg(
+    url,
+    logo,
+    { background: '#FFFFFF', modules: 'var(--color-ink)', eyes: 'var(--color-primary)' },
+    `qr-${i}`,
+  );
+  const display = url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+  return { title, url, fileName, svg, logoBox, display };
+});
+const first = slides[start];
+---
+
+<section class="qr" data-start={start}>
+  <div class="qr__head">
+    <h1>{first.title}</h1>
+    <p class="qr__lead">Scan to open <a href={first.url}>{first.display}</a></p>
+  </div>
+
+  <div class="qr__track" role="region" aria-roledescription="carousel" aria-label="QR codes">
+    {
+      slides.map((slide, i) => (
+        <div
+          class="qr__slide"
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${i + 1} of ${slides.length}: ${slide.title}`}
+          data-title={slide.title}
+          data-url={slide.url}
+          data-display={slide.display}
+          data-file={slide.fileName}
+        >
+          <div class="qr__stage">
+            <div class="qr__card">
+              <div class="qr__code" set:html={slide.svg} />
+              <div
+                class="qr__logo"
+                style={`left:${slide.logoBox.start * 100}%;top:${slide.logoBox.start * 100}%;width:${slide.logoBox.size * 100}%;height:${slide.logoBox.size * 100}%`}
+              >
+                <OrbitLogo id={`qr-${i}-orbit`} />
+              </div>
+              <div class="qr__glare" />
+              <div class="qr__shine" />
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  {
+    slides.length > 1 && (
+      <div class="qr__dots" role="group" aria-label="Choose QR code">
+        {slides.map((slide, i) => (
+          <button
+            type="button"
+            class="qr__dot"
+            aria-label={`Show ${slide.title} QR code`}
+            aria-current={i === start ? 'true' : 'false'}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  <div class="qr__actions">
+    <button type="button" class="btn btn--primary" data-download="png">Download PNG</button>
+    <button type="button" class="btn btn--secondary" data-download="svg">Download SVG</button>
+    <button type="button" class="btn btn--secondary" data-copy>Copy link</button>
+  </div>
+</section>
+
+<style>
+  .qr {
+    min-height: 100svh;
+    padding-block: clamp(2.5rem, 8vh, 5rem) 3rem;
+    text-align: center;
+  }
+  .qr__head, .qr__dots, .qr__actions { width: min(520px, 100% - 2rem); margin-inline: auto; }
+  .qr h1 { font-size: clamp(2rem, 7vw, 2.8rem); margin-bottom: 0.35rem; }
+  /* One line keeps the card from jumping when a longer URL slides in. */
+  .qr__lead {
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .qr__lead a { color: var(--color-text); text-underline-offset: 0.3em; }
+
+  /* The padding leaves room for the card's shadow and tilt, which the scroll container would clip. */
+  .qr__track {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-block: 1rem 5rem;
+    margin-bottom: -3rem;
+  }
+  .qr__track::-webkit-scrollbar { display: none; }
+  .qr__slide { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; }
+
+  .qr__stage { perspective: 900px; }
+  .qr__card {
+    --rx: 0deg;
+    --ry: 0deg;
+    position: relative;
+    width: min(380px, 100% - 2rem);
+    margin-inline: auto;
+    border-radius: 6%;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-accent) 60%, transparent),
+      0 2px 0 var(--color-accent),
+      0 3px 0 color-mix(in srgb, var(--color-accent) 80%, var(--color-primary)),
+      0 5px 0 var(--color-primary),
+      0 7px 0 var(--color-deep),
+      0 18px 30px -6px rgb(0 0 0 / 0.55),
+      0 40px 70px -20px rgb(0 0 0 / 0.6);
+  }
+  .qr__code :global(svg) { display: block; width: 100%; height: auto; border-radius: 6%; }
+  .qr__logo { position: absolute; border-radius: var(--radius-logo); overflow: hidden; background: var(--color-primary); }
+  .qr__logo :global(svg) { display: block; width: 100%; height: 100%; padding: 9%; }
+  .qr__glare {
+    position: absolute;
+    inset: 0;
+    border-radius: 6%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at var(--gx, 50%) var(--gy, 50%),
+      rgb(255 255 255 / 0.55),
+      rgb(255 255 255 / 0) 60%
+    );
+    mix-blend-mode: soft-light;
+  }
+  .qr__shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 6%;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent calc(var(--gx, 50%) - 30%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) - 8%),
+      rgb(255 255 255 / 0.9) var(--gx, 50%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) + 8%),
+      transparent calc(var(--gx, 50%) + 30%)
+    );
+    mix-blend-mode: screen;
+    opacity: var(--shine, 0);
+  }
+
+  .qr__dots { position: relative; display: flex; justify-content: center; margin-bottom: 1.5rem; }
+  .qr__dot {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .qr__dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--color-line-hover);
+    transition: width 0.2s ease, background-color 0.2s ease;
+  }
+  .qr__dot[aria-current='true']::before { width: 20px; background: var(--color-accent); }
+
+  .qr__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+
+  @media (max-width: 480px) {
+    .qr__actions .btn { flex: 1 1 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qr__dot::before { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.qr')!;
+  const track = root.querySelector<HTMLElement>('.qr__track')!;
+  const slides = [...root.querySelectorAll<HTMLElement>('.qr__slide')];
+  const dots = [...root.querySelectorAll<HTMLButtonElement>('.qr__dot')];
+  const title = root.querySelector('h1')!;
+  const lead = root.querySelector<HTMLAnchorElement>('.qr__lead a')!;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let active = Number(root.dataset.start);
+  const slide = () => slides[active];
+  const card = () => slide().querySelector<HTMLElement>('.qr__card')!;
+  let onLeave = () => {};
+
+  const setActive = (index: number) => {
+    onLeave();
+    active = index;
+    const { title: text, url, display } = slide().dataset;
+    title.textContent = text!;
+    lead.href = url!;
+    lead.textContent = display!;
+    dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
+  };
+
+  const go = (index: number) =>
+    track.scrollTo({
+      left: Math.max(0, Math.min(slides.length - 1, index)) * track.clientWidth,
+      behavior: reducedMotion ? 'instant' : 'smooth',
+    });
+
+  track.scrollLeft = active * track.clientWidth;
+  track.addEventListener(
+    'scroll',
+    () => {
+      const index = Math.round(track.scrollLeft / track.clientWidth);
+      if (index !== active && slides[index]) setActive(index);
+    },
+    { passive: true },
+  );
+  dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'ArrowLeft') go(active - 1);
+    else if (e.key === 'ArrowRight') go(active + 1);
+    else return;
+    e.preventDefault();
+  });
+
+  if (!reducedMotion) {
+    const max = 12;
+    const target = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let frame = 0;
+    const clamp = (v: number) => Math.max(-max, Math.min(max, v));
+
+    const render = () => {
+      current.x += (target.x - current.x) * 0.15;
+      current.y += (target.y - current.y) * 0.15;
+      const el = card();
+      el.style.setProperty('--rx', `${current.x}deg`);
+      el.style.setProperty('--ry', `${current.y}deg`);
+      el.style.setProperty('--gx', `${50 + (current.y / max) * 50}%`);
+      el.style.setProperty('--gy', `${50 - (current.x / max) * 50}%`);
+      el.style.setProperty('--shine', `${Math.min(1, Math.hypot(current.x, current.y) / max) * 0.6}`);
+      const moving = Math.abs(target.x - current.x) + Math.abs(target.y - current.y) > 0.01;
+      frame = moving ? requestAnimationFrame(render) : 0;
+    };
+    const tilt = (x: number, y: number) => {
+      target.x = clamp(x);
+      target.y = clamp(y);
+      if (!frame) frame = requestAnimationFrame(render);
+    };
+
+    // Only the visible card tilts, so the one swiped away snaps back flat.
+    onLeave = () => {
+      ['--rx', '--ry', '--gx', '--gy', '--shine'].forEach((name) => card().style.removeProperty(name));
+      current.x = current.y = 0;
+    };
+
+    // Hit-testing the untransformed stage keeps the tilted card edge from slipping out under the pointer.
+    // Touch pointers are left to the native horizontal swipe and the gyro, so only mouse/pen drive the pointer tilt.
+    track.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      const box = slide().querySelector<HTMLElement>('.qr__stage')!.getBoundingClientRect();
+      const width = card().offsetWidth;
+      const x = (e.clientX - box.left - (box.width - width) / 2) / width;
+      const y = (e.clientY - box.top) / box.height;
+      if (x < 0 || x > 1 || y < 0 || y > 1) tilt(0, 0);
+      else tilt((0.5 - y) * max * 2, (x - 0.5) * max * 2);
+    });
+    track.addEventListener('pointerleave', () => tilt(0, 0));
+
+    // The baseline slowly follows the phone, so holding it still at any angle settles flat.
+    let base: { beta: number; gamma: number } | null = null;
+    const wrap = (deg: number) => ((deg + 540) % 360) - 180;
+    const onOrientation = (e: DeviceOrientationEvent) => {
+      if (e.beta === null || e.gamma === null) return;
+      base ??= { beta: e.beta, gamma: e.gamma };
+      const dBeta = wrap(e.beta - base.beta);
+      const dGamma = wrap(e.gamma - base.gamma);
+      base.beta = wrap(base.beta + dBeta * 0.02);
+      base.gamma = wrap(base.gamma + dGamma * 0.02);
+      tilt(dBeta, -dGamma);
+    };
+
+    const orientation = DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<PermissionState>;
+    };
+    const listen = () => window.addEventListener('deviceorientation', onOrientation);
+    listen();
+    if (typeof orientation.requestPermission === 'function') {
+      // iOS only delivers sensor events after permission is granted from a user gesture.
+      track.addEventListener(
+        'click',
+        () =>
+          orientation.requestPermission!()
+            .then((state) => state === 'granted' && listen())
+            .catch(() => {}),
+        { once: true },
+      );
+    }
+  }
+
+  const styles = getComputedStyle(document.documentElement);
+  const standaloneSvg = () =>
+    slide()
+      .querySelector<SVGSVGElement>('.qr__code svg')!
+      .outerHTML.replace(/var\((--[\w-]+)\)/g, (_, name) => styles.getPropertyValue(name).trim());
+
+  const save = (blob: Blob, ext: string) => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${slide().dataset.file}.${ext}`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  };
+
+  const toPng = (svg: string, size: number) =>
+    new Promise<Blob>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, size, size);
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('PNG export failed'))), 'image/png');
+      };
+      img.onerror = reject;
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    });
+
+  root.querySelectorAll<HTMLButtonElement>('[data-download]').forEach((button) =>
+    button.addEventListener('click', async () => {
+      const svg = standaloneSvg();
+      if (button.dataset.download === 'svg') save(new Blob([svg], { type: 'image/svg+xml' }), 'svg');
+      else save(await toPng(svg, 2048), 'png');
+    }),
+  );
+
+  const copy = root.querySelector<HTMLButtonElement>('[data-copy]')!;
+  copy.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(slide().dataset.url!);
+    copy.textContent = 'Copied';
+    setTimeout(() => (copy.textContent = 'Copy link'), 1500);
+  });
+</script>
