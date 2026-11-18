@@ -65,7 +65,11 @@ export function toMarkdown(event: HitractEvent, club: string, timeZone: string, 
     .filter(([, value]) => value !== null)
     .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
     .join('\n');
-  const body = (event.description ?? '').trim().replace(/</g, '&lt;').replace(/\n/g, '  \n');
+  const body = (event.description ?? '')
+    .trim()
+    .replace(/</g, '&lt;')
+    .replace(/[\\[\]]/g, '\\$&')
+    .replace(/\n/g, '  \n');
   const membersOnly = event.onlyForMembers ? '\n\n*Members only.*' : '';
   return `---\n${yaml}\n---\n\n${body}${membersOnly}\n`;
 }
