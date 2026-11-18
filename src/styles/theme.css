@@ -10,6 +10,7 @@
   --color-secondary: #5B2A86;
   --color-deep: #3F2475;
   --color-accent: #C9B3F2;
+  /* theme-color in src/layouts/Layout.astro must match (meta tags cannot use CSS variables). */
   --color-bg-dark: #1F1630;
   --color-bg: #2E2246;
   --color-bg-soft: #42325F;
@@ -17,6 +18,8 @@
   --color-text-muted: #D3CCE0;
   --color-text-on-dark: #FFFFFF;
   --color-ink: #1E1035;
+  --color-line: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --color-line-on-dark: color-mix(in srgb, var(--color-text-on-dark) 24%, transparent);
 
   --font-heading: 'Libre Caslon Text', Georgia, serif;
   --font-body: 'Libre Caslon Text', Georgia, serif;
