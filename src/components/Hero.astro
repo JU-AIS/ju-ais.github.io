@@ -75,7 +75,7 @@ const { nextEvent } = Astro.props;
   .hero h1 { max-width: 12ch; margin-bottom: 1.5rem; }
   .hero__lead { max-width: 34rem; font-size: clamp(1.1rem, 2.4vw, 1.25rem); color: var(--color-text-muted); margin-bottom: 2.5rem; }
   .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; }
-  .hero__join { min-height: 52px; padding-inline: 2em; }
+  .hero__join { padding-inline: 2em; }
   .hero .text-link { padding-block: 1rem; }
   .hero__discord { display: inline-flex; align-items: center; gap: 0.5rem; }
   .hero__discord :global(svg) { fill: currentColor; flex-shrink: 0; }
@@ -83,7 +83,7 @@ const { nextEvent } = Astro.props;
   .hero__next {
     display: block;
     text-decoration: none;
-    border-top: 1px solid color-mix(in srgb, var(--color-text-on-dark) 25%, transparent);
+    border-top: 1px solid var(--color-line);
     background: var(--color-primary);
     transition: background-color 0.2s ease;
   }
@@ -91,7 +91,7 @@ const { nextEvent } = Astro.props;
   .hero__next-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; padding-block: 1.5rem; }
   .hero__next .label { color: var(--color-accent); }
   .hero__next-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; }
-  .hero__next-meta { font-family: var(--font-mono); font-size: 0.9rem; }
+  .hero__next-meta { font-family: var(--font-mono); font-size: var(--text-mono); }
   .hero__next-arrow { margin-left: auto; }
 
   /* Below this width the large logo would run into the headline, so it moves to the top corner. */

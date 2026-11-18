@@ -81,8 +81,8 @@ const rendered = await Promise.all(
 
 <style>
   .events { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
-  .event-card { border-radius: 6px; overflow: hidden; background: var(--color-bg-soft); border: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); transition: border-color 0.2s ease; }
-  .event-card:hover { border-color: color-mix(in srgb, var(--color-text) 40%, transparent); }
+  .event-card { border-radius: var(--radius-lg); overflow: hidden; background: var(--color-bg-soft); border: 1px solid var(--color-line); transition: border-color 0.2s ease; }
+  .event-card:hover { border-color: var(--color-line-hover); }
   .event-card__link { display: block; height: 100%; text-decoration: none; }
   .event-card__body { padding: 1.4rem 1.4rem 1.6rem; }
   @media (min-width: 760px) {
@@ -95,20 +95,20 @@ const rendered = await Promise.all(
   .event-card__body .label { margin-bottom: 0.5rem; }
   .event-card__body h3 { margin-bottom: 0.25rem; }
   .event-card__meta { color: var(--color-text-muted); margin-bottom: 1.1rem; }
-  .event-card__more { font-family: var(--font-mono); font-size: 0.85rem; color: var(--color-accent); }
+  .event-card__more { font-family: var(--font-mono); font-size: var(--text-mono-sm); color: var(--color-accent); }
 
   .event-modal {
     width: min(720px, 100% - 1.5rem);
     max-height: calc(100% - 1.5rem);
     padding: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: var(--color-bg-soft);
     color: var(--color-text);
     overflow: auto;
     overscroll-behavior: contain;
   }
-  .event-modal::backdrop { background: color-mix(in srgb, var(--color-bg-dark) 75%, transparent); backdrop-filter: blur(6px); }
+  .event-modal::backdrop { background: var(--color-overlay); backdrop-filter: blur(6px); }
   .event-modal[open] { animation: modal-in 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
   .event-modal__panel { position: relative; }
   .event-modal__close {
@@ -120,19 +120,19 @@ const rendered = await Promise.all(
     height: 44px;
     border: 0;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--color-bg-dark) 70%, transparent);
-    color: var(--color-text-on-dark);
+    background: var(--color-overlay);
+    color: var(--color-text);
     font-size: 1.6rem;
     line-height: 1;
     cursor: pointer;
   }
   .event-modal :global(.cover--placeholder) { aspect-ratio: 16 / 7; }
   .event-modal__body { padding: 1.75rem clamp(1.25rem, 4vw, 2.5rem) 2.25rem; }
-  .event-modal__details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0 1.5rem; padding: 1rem 0; border-block: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); }
+  .event-modal__details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0 1.5rem; padding: 1rem 0; border-block: 1px solid var(--color-line); }
   .event-modal__details dd { margin: 0.2rem 0 0; }
   .event-modal__content { margin-bottom: 1.75rem; }
   .event-modal__photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; margin-bottom: 1.75rem; }
-  .event-modal__photos img { border-radius: 4px; aspect-ratio: 1; object-fit: cover; }
+  .event-modal__photos img { border-radius: var(--radius-sm); aspect-ratio: 1; object-fit: cover; }
 
   @keyframes modal-in {
     from { opacity: 0; transform: translateY(12px); }
