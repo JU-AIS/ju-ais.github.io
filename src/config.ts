@@ -2,7 +2,7 @@
 export const config = {
   name: 'Jönköping University AI Student Association',
   shortName: 'JU AIS',
-  joinUrl: 'https://hitract.se/hitclub/ju-ai-student-association/hitmemberships#membership-list',
+  joinUrl: 'https://hitract.se/hitclub/ju-ai-student-association',
   discordUrl: 'https://discord.gg/Jr8uSpJt4S',
   instagramUrl: 'https://www.instagram.com/juaistudentassociation/',
   linkedinUrl: 'https://www.linkedin.com/company/ju-ai-student-association/',
