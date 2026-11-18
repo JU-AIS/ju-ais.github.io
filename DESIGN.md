@@ -18,6 +18,7 @@ logo-dark.svg → replace with new file from Growth
 ```
 
 - **Colors and fonts** live in `src/styles/theme.css`. Changing a token there updates the whole site, including the hero dot animation, the animated logo and the QR codes.
+- **After a color change**, run `npm run swatches` to refresh the color swatch images in `docs/swatches/` and update the Hex column in 2.1.
 - **Name** (`JU AIS` / `Jönköping University AI Student Association`) lives in `src/config.ts` (`name`, `shortName`).
 - **Logos and favicons** are separate files in `public/`. They contain fixed hex colors, so a token change does **not** recolor them. They have to be re-exported (see section 4).
 - **Shapes, sizes and spacing** are not tokens yet. They are set per component (section 5). To change one, name the element, for example "event card radius".
@@ -28,34 +29,34 @@ logo-dark.svg → replace with new file from Growth
 
 ### 2.1 Tokens (`src/styles/theme.css`)
 
-| Token | Hex | Growth name | Where it's used |
-|---|---|---|---|
-| `--color-primary` | `#4A2390` | Spark Violet | "Next event" bar under the hero, QR code eyes (corner squares), the tile behind the logo in the middle of the QR code, QR card 3D edge |
-| `--color-secondary` | `#5B2A86` | Orchid | "Next event" bar when hovered |
-| `--color-deep` | `#3F2475` | Deep Iris | Bottom layer of the QR card 3D edge only |
-| `--color-accent` | `#C9B3F2` | Lavender Glow | Primary button background (`.btn--primary`: Join, Sign up, Get in touch, Download PNG), links page primary button, all `.label` text (eyebrows, dates, "Next event"), "Details & sign-up →" on event cards, event cover month and dot pattern, hero dot animation, animated logo orbits and glow, What we do meter dots, keyboard focus ring, QR card 3D edge |
-| `--color-bg-dark` | `#1F1630` | *(not in Growth palette)* | Page background behind everything, navbar, footer, every `.section--dark` (hero, page headers, Join CTA), modal backdrop and close button (tinted) |
-| `--color-bg` | `#2E2246` | *(not in Growth palette)* | Main content background (`<main>`), event cover placeholder |
-| `--color-bg-soft` | `#42325F` | *(not in Growth palette)* | Cards: event cards, event modal, What we do activity cards, links page buttons, QR page secondary buttons |
-| `--color-text` | `#FFFFFF` | Paper White | Body text, headings, all thin divider lines and card borders (as a transparent mix, see 2.3) |
-| `--color-text-muted` | `#D3CCE0` | *(not in Growth palette)* | Lead paragraphs, card descriptions, event location, footer copyright, board list, mission numbers |
-| `--color-text-on-dark` | `#FFFFFF` | Paper White | Text in navbar, footer, dark sections, animated logo dots and spark, hamburger icon |
-| `--color-ink` | `#1E1035` | Midnight Plum | Text on lavender buttons, QR code dots |
+| Swatch | Token | Hex | Growth name | Where it's used |
+|---|---|---|---|---|
+| ![](docs/swatches/primary.svg) | `--color-primary` | `#4A2390` | Spark Violet | "Next event" bar under the hero, QR code eyes (corner squares), the tile behind the logo in the middle of the QR code, QR card 3D edge |
+| ![](docs/swatches/secondary.svg) | `--color-secondary` | `#5B2A86` | Orchid | "Next event" bar when hovered |
+| ![](docs/swatches/deep.svg) | `--color-deep` | `#3F2475` | Deep Iris | Bottom layer of the QR card 3D edge only |
+| ![](docs/swatches/accent.svg) | `--color-accent` | `#C9B3F2` | Lavender Glow | Primary button background (`.btn--primary`: Join, Sign up, Get in touch, Download PNG), links page primary button, all `.label` text (eyebrows, dates, "Next event"), "Details & sign-up →" on event cards, event cover month and dot pattern, hero dot animation, animated logo orbits and glow, What we do meter dots, keyboard focus ring, QR card 3D edge |
+| ![](docs/swatches/bg-dark.svg) | `--color-bg-dark` | `#1F1630` | *(not in Growth palette)* | Page background behind everything, navbar, footer, every `.section--dark` (hero, page headers, Join CTA), modal backdrop and close button (tinted) |
+| ![](docs/swatches/bg.svg) | `--color-bg` | `#2E2246` | *(not in Growth palette)* | Main content background (`<main>`), event cover placeholder |
+| ![](docs/swatches/bg-soft.svg) | `--color-bg-soft` | `#42325F` | *(not in Growth palette)* | Cards: event cards, event modal, What we do activity cards, links page buttons, QR page secondary buttons |
+| ![](docs/swatches/text.svg) | `--color-text` | `#FFFFFF` | Paper White | Body text, headings, all thin divider lines and card borders (as a transparent mix, see 2.3) |
+| ![](docs/swatches/text-muted.svg) | `--color-text-muted` | `#D3CCE0` | *(not in Growth palette)* | Lead paragraphs, card descriptions, event location, footer copyright, board list, mission numbers |
+| ![](docs/swatches/text-on-dark.svg) | `--color-text-on-dark` | `#FFFFFF` | Paper White | Text in navbar, footer, dark sections, animated logo dots and spark, hamburger icon |
+| ![](docs/swatches/ink.svg) | `--color-ink` | `#1E1035` | Midnight Plum | Text on lavender buttons, QR code dots |
 
 ### 2.2 Contrast pairs in use (WCAG ratio, AA needs 4.5 for body text)
 
 | Text | Background | Ratio | Where |
 |---|---|---|---|
 | `--color-text` `#FFFFFF` | `--color-bg-dark` | 17.3 | Hero, headers, nav, footer |
-| `--color-text` | `--color-bg` | 14.7 | Main content |
-| `--color-text` | `--color-bg-soft` | 11.3 | Cards, modal, links buttons |
-| `--color-text` | `--color-primary` | 10.9 | "Next event" bar |
-| `--color-text` | `--color-secondary` | 9.9 | "Next event" bar (hover) |
+| ![](docs/swatches/text.svg) | `--color-text` | `--color-bg` | 14.7 | Main content |
+| ![](docs/swatches/text.svg) | `--color-text` | `--color-bg-soft` | 11.3 | Cards, modal, links buttons |
+| ![](docs/swatches/text.svg) | `--color-text` | `--color-primary` | 10.9 | "Next event" bar |
+| ![](docs/swatches/text.svg) | `--color-text` | `--color-secondary` | 9.9 | "Next event" bar (hover) |
 | `--color-text-muted` `#D3CCE0` | `--color-bg-dark` / `--color-bg` / `--color-bg-soft` | 11.1 / 9.4 / 7.3 | Leads, descriptions |
 | `--color-accent` `#C9B3F2` | `--color-bg-dark` / `--color-bg` / `--color-bg-soft` | 9.2 / 7.8 / 6.1 | Labels, card links |
-| `--color-accent` | `--color-primary` | 5.8 | "Next event" label |
+| ![](docs/swatches/accent.svg) | `--color-accent` | `--color-primary` | 5.8 | "Next event" label |
 | `--color-ink` `#1E1035` | `--color-accent` | 9.5 | Primary buttons |
-| `--color-ink` | `#DFD1F7` (accent hover) | 12.4 | Primary buttons (hover) |
+| ![](docs/swatches/ink.svg) | `--color-ink` | `#DFD1F7` (accent hover) | 12.4 | Primary buttons (hover) |
 | `--color-ink` (QR dots) | `#FFFFFF` | 17.8 | QR code |
 
 All pairs pass AA. If a new color is proposed, these are the pairs to re-check.
