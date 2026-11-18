@@ -34,6 +34,7 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         <OrbitLogo />
       </div>
       <div class="qr__glare"></div>
+      <div class="qr__shine"></div>
     </div>
   </div>
 
@@ -66,7 +67,6 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     border-radius: 6%;
     transform: rotateX(var(--rx)) rotateY(var(--ry));
     transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
     box-shadow:
       0 1px 0 color-mix(in srgb, var(--color-accent) 60%, transparent),
       0 2px 0 var(--color-accent),
@@ -76,7 +76,6 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
       0 18px 30px -6px rgb(0 0 0 / 0.55),
       0 40px 70px -20px rgb(0 0 0 / 0.6);
   }
-  .qr__card.is-tilting { transition: transform 0.08s linear; }
   .qr__code :global(svg) { display: block; width: 100%; height: auto; border-radius: 6%; }
   .qr__logo { position: absolute; border-radius: var(--radius-logo); overflow: hidden; background: var(--color-primary); }
   .qr__logo :global(svg) { display: block; width: 100%; height: 100%; padding: 9%; }
@@ -86,20 +85,33 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     border-radius: 6%;
     pointer-events: none;
     background: radial-gradient(
-      circle at var(--gx, 30%) var(--gy, 20%),
-      rgb(255 255 255 / 0.35),
-      rgb(255 255 255 / 0) 55%
+      circle at var(--gx, 50%) var(--gy, 50%),
+      rgb(255 255 255 / 0.55),
+      rgb(255 255 255 / 0) 60%
     );
     mix-blend-mode: soft-light;
+  }
+  .qr__shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 6%;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent calc(var(--gx, 50%) - 30%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) - 8%),
+      rgb(255 255 255 / 0.9) var(--gx, 50%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) + 8%),
+      transparent calc(var(--gx, 50%) + 30%)
+    );
+    mix-blend-mode: screen;
+    opacity: var(--shine, 0);
   }
 
   .qr__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
 
   @media (max-width: 480px) {
     .qr__actions .btn { flex: 1 1 100%; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .qr__card { transition: none; }
   }
 </style>
 
@@ -110,23 +122,72 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!reducedMotion) {
-    card.style.setProperty('--rx', '8deg');
-    card.style.setProperty('--ry', '-10deg');
-    card.addEventListener('pointermove', (e) => {
-      const box = card.getBoundingClientRect();
-      const x = (e.clientX - box.left) / box.width;
+    const max = 12;
+    const target = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let frame = 0;
+    const clamp = (v: number) => Math.max(-max, Math.min(max, v));
+
+    const render = () => {
+      current.x += (target.x - current.x) * 0.15;
+      current.y += (target.y - current.y) * 0.15;
+      card.style.setProperty('--rx', `${current.x}deg`);
+      card.style.setProperty('--ry', `${current.y}deg`);
+      card.style.setProperty('--gx', `${50 + (current.y / max) * 50}%`);
+      card.style.setProperty('--gy', `${50 - (current.x / max) * 50}%`);
+      card.style.setProperty('--shine', `${Math.min(1, Math.hypot(current.x, current.y) / max) * 0.6}`);
+      const moving = Math.abs(target.x - current.x) + Math.abs(target.y - current.y) > 0.01;
+      frame = moving ? requestAnimationFrame(render) : 0;
+    };
+    const tilt = (x: number, y: number) => {
+      target.x = clamp(x);
+      target.y = clamp(y);
+      if (!frame) frame = requestAnimationFrame(render);
+    };
+
+    // Hit-testing the untransformed stage keeps the tilted card edge from slipping out under the pointer.
+    // Touch pointers would fight the gyro, so only mouse/pen drive the pointer tilt.
+    const stage = root.querySelector<HTMLElement>('.qr__stage')!;
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      const box = stage.getBoundingClientRect();
+      const width = card.offsetWidth;
+      const x = (e.clientX - box.left - (box.width - width) / 2) / width;
       const y = (e.clientY - box.top) / box.height;
-      card.classList.add('is-tilting');
-      card.style.setProperty('--ry', `${(x - 0.5) * 24}deg`);
-      card.style.setProperty('--rx', `${(0.5 - y) * 24}deg`);
-      card.style.setProperty('--gx', `${x * 100}%`);
-      card.style.setProperty('--gy', `${y * 100}%`);
+      if (x < 0 || x > 1) tilt(0, 0);
+      else tilt((0.5 - y) * max * 2, (x - 0.5) * max * 2);
     });
-    card.addEventListener('pointerleave', () => {
-      card.classList.remove('is-tilting');
-      card.style.setProperty('--rx', '8deg');
-      card.style.setProperty('--ry', '-10deg');
-    });
+    stage.addEventListener('pointerleave', () => tilt(0, 0));
+
+    // The baseline slowly follows the phone, so holding it still at any angle settles flat.
+    let base: { beta: number; gamma: number } | null = null;
+    const wrap = (deg: number) => ((deg + 540) % 360) - 180;
+    const onOrientation = (e: DeviceOrientationEvent) => {
+      if (e.beta === null || e.gamma === null) return;
+      base ??= { beta: e.beta, gamma: e.gamma };
+      const dBeta = wrap(e.beta - base.beta);
+      const dGamma = wrap(e.gamma - base.gamma);
+      base.beta = wrap(base.beta + dBeta * 0.02);
+      base.gamma = wrap(base.gamma + dGamma * 0.02);
+      tilt(dBeta, -dGamma);
+    };
+
+    const orientation = DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<PermissionState>;
+    };
+    const listen = () => window.addEventListener('deviceorientation', onOrientation);
+    listen();
+    if (typeof orientation.requestPermission === 'function') {
+      // iOS only delivers sensor events after permission is granted from a user gesture.
+      card.addEventListener(
+        'click',
+        () =>
+          orientation.requestPermission!()
+            .then((state) => state === 'granted' && listen())
+            .catch(() => {}),
+        { once: true },
+      );
+    }
   }
 
   const styles = getComputedStyle(document.documentElement);
