@@ -61,6 +61,13 @@ test('footer and links page link to Discord, Instagram, LinkedIn and email', asy
   }
 });
 
+test('footer links to GitHub and the QR page', async ({ page }) => {
+  await page.goto('/');
+  const footer = page.locator('footer');
+  await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', config.githubUrl);
+  await expect(footer.getByRole('link', { name: 'QR code' })).toHaveAttribute('href', '/qr');
+});
+
 test('partners page has a mailto link', async ({ page }) => {
   await page.goto('/partners');
   await expect(page.locator(`a[href^="mailto:${config.partnerEmail}"]`).first()).toBeVisible();

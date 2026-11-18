@@ -144,7 +144,8 @@ Current symbol is Growth's Orbit symbol (three orbits, three nodes, central spar
 | `src/components/OrbitLogo.astro` | Animated Orbit symbol, no tile. Nodes travel along the orbits, spark pulses twice per 3.6 s loop, soft accent glow behind the spark (copied from Growth's `orbit-symbol-animated` GIF/MP4) | Tokens: orbits/glow `--color-accent`, nodes/spark `--color-text` | Home hero (right side, 180–320px, top corner 120px below 1100px width), 404 page, QR pages (shown on screen on top of the QR code, on a `--color-primary` tile) | Animated, paused with reduced motion |
 | `src/icons/discord.svg` | Discord glyph | `currentColor` (inherits text color) | Hero "Discord →" link (20px), social row | Static |
 | `src/icons/instagram.svg`, `linkedin.svg`, `mail.svg` | Social glyphs | `currentColor` | Social row in footer and links page (22px in 44px tap target) | Static |
-| `src/icons/qr.svg` | QR glyph | `currentColor` | Footer social row only, after Email, links to `/qr` | Static |
+| `src/icons/github.svg` | GitHub mark | `currentColor` | Footer social row only, after Email, links to the GitHub org | Static |
+| `src/icons/qr.svg` | QR glyph | `currentColor` | Footer social row only, after GitHub, links to `/qr` | Static |
 
 Notes:
 - The QR page shows the animated logo, but **downloads always use the static `public/logo.svg`**.
@@ -245,16 +246,16 @@ Event cards use a 16:9 cover (`EventCover.astro`): photo, or a placeholder with 
 Sticky, 68px tall, `--color-bg-dark`, `--color-line` bottom line. Left: `logo-dark.svg` 36px + "JU AIS" in mono. Right: mono links (`--text-mono`, 92% opacity, 100% on hover) and a Join button. Below 720px: hamburger (two lines that turn into an X) opening a full-width dropdown with dividers between links.
 
 ### Footer (`Footer.astro`)
-`.section--dark`, `--color-line` top line, padding 3.5rem top / 2.5rem bottom. Logo 44px + full name, social icon row (with the QR icon), copyright in muted mono. Two columns from 800px.
+`.section--dark`, `--color-line` top line, padding 3.5rem top / 2.5rem bottom. Logo 44px + full name, social icon row (with GitHub and QR icons), copyright in muted mono. Two columns from 800px.
 
 ### Join CTA (`JoinCta.astro`)
 Dark section at the end of most pages: "Join JU AIS" h2, one muted line, primary button. Side by side on wide screens, stacked when narrow.
 
 ### Social links (`SocialLinks.astro`)
-Discord, Instagram, LinkedIn, Email icons at 22px inside 44px tap targets, inherit text color, 75% opacity on hover. Prop `qr` adds a QR icon (`src/icons/qr.svg`) after Email, linking to `/qr`. Used in footer (with `qr`) and links page (without). Only `http` links open in a new tab.
+Discord, Instagram, LinkedIn, Email icons at 22px inside 44px tap targets, inherit text color, 75% opacity on hover. Prop `footer` adds GitHub (`config.githubUrl`) and a QR icon (linking to `/qr`) after Email. Used in footer (with `footer`) and links page (without). Only `http` links open in a new tab.
 
 ### Links page (`/links`, `links.astro`)
-Link-in-bio page with no navbar/footer (`bare` layout). Column max 480px, centered. Logo 88px with `--radius-logo`, h1 "JU AIS" 2.4rem, full name in muted. Buttons are `.btn` + `.links__btn` (full width, 1.25rem side padding), 48px: first button ("Join for free") `.btn--primary`, the rest `.btn--secondary`. Social row below (no QR icon).
+Link-in-bio page with no navbar/footer (`bare` layout). Column max 480px, centered. Logo 88px with `--radius-logo`, h1 "JU AIS" 2.4rem, full name in muted. Buttons are `.btn` + `.links__btn` (full width, 1.25rem side padding), 48px: first button ("Join for free") `.btn--primary`, the rest `.btn--secondary`. Social row below (no GitHub or QR icon).
 
 ### QR pages (`/qr`, `/links/qr`, `QrCard.astro` + `src/lib/qr.ts`)
 No navbar/footer. Column max 520px. QR card max 380px with a 3D tilt that follows the pointer, 3D edge shadow and glare.
