@@ -8,7 +8,7 @@ const { upcoming } = await getEvents();
 const nextEvent = upcoming[0];
 
 const links = [
-  { label: 'Join for free', href: config.joinUrl, primary: true, external: true },
+  { label: 'Join now', href: config.joinUrl, primary: true },
   ...(nextEvent
     ? [{ label: `${nextEvent.data.title} · ${formatDate(nextEvent.data.date)}`, href: `/events#${nextEvent.id}` }]
     : []),

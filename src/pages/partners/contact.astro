@@ -1,0 +1,104 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { config } from '../../config';
+
+// Entry ids of the questions in the Google Form; they change only if a question is deleted and re-added.
+const fields = [
+  { name: 'entry.754531229', label: 'Name', type: 'text', autocomplete: 'name', placeholder: 'Your name', required: true },
+  { name: 'entry.1210730446', label: 'Company / organisation', type: 'text', autocomplete: 'organization', placeholder: 'Your company', required: true },
+  { name: 'entry.1204411624', label: 'Email', type: 'email', autocomplete: 'email', placeholder: 'you@example.com', required: true },
+];
+const message = { name: 'entry.653086784', label: 'What would you like to talk about?', placeholder: 'A guest talk, sponsoring a hackathon, a thesis project…' };
+---
+
+<Layout title="Contact" description={`Get in touch with ${config.shortName} about partnering.`}>
+  <section class="section section--dark page-head">
+    <div class="container">
+      <p class="label">For companies</p>
+      <h1>Get in touch</h1>
+      <p class="page-head__lead">Leave your details and we'll get back to you within a few days.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <form class="contact" action={config.partnerFormAction} method="post">
+        {
+          fields.map((field) => (
+            <label class="contact__field">
+              <span>{field.label}</span>
+              <input name={field.name} type={field.type} autocomplete={field.autocomplete} placeholder={field.placeholder} required={field.required} />
+            </label>
+          ))
+        }
+        <label class="contact__field">
+          <span>{message.label} <em>(optional)</em></span>
+          <textarea name={message.name} rows="5" placeholder={message.placeholder}></textarea>
+        </label>
+        <!-- Bots fill every field; people never see this one. -->
+        <label class="contact__trap" aria-hidden="true">
+          Website <input name="website" tabindex="-1" autocomplete="off" />
+        </label>
+        <button type="submit" class="btn btn--primary">Send</button>
+        <p class="contact__note">We only use your details to reply to you. Contact us to have them removed.</p>
+      </form>
+
+      <div class="contact__done" hidden>
+        <h2>Thanks!</h2>
+        <p>We'll be in touch soon.</p>
+        <a href="/partners" class="btn btn--secondary">Back to partners</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .contact, .contact__done { display: grid; gap: 1.25rem; max-width: 36rem; }
+  .contact__field { display: grid; gap: 0.45rem; }
+  .contact__field span { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.06em; text-transform: uppercase; }
+  .contact__field em { font-style: normal; color: var(--color-text-muted); text-transform: none; }
+  .contact input, .contact textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font: inherit;
+    font-size: 1.05rem;
+    color: var(--color-text);
+    background: var(--color-bg-soft);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-md);
+  }
+  .contact textarea { resize: vertical; }
+  .contact ::placeholder { color: var(--color-text-muted); opacity: 0.6; }
+  .contact input:focus-visible, .contact textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-color: transparent; }
+  .contact .btn { justify-self: start; }
+  .contact__note { margin: 0; color: var(--color-text-muted); font-size: 0.95rem; }
+  .contact__trap { position: absolute; left: -9999px; }
+  .contact[hidden], .contact__done[hidden] { display: none; }
+  .contact__done h2 { margin: 0; }
+  .contact__done p { margin: 0; color: var(--color-text-muted); }
+  .contact__done .btn { justify-self: start; }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.contact')!;
+  const done = document.querySelector<HTMLElement>('.contact__done')!;
+
+  // Google Forms doesn't allow reading the reply (no CORS), so a sent request counts as success.
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const isBot = data.get('website');
+    data.delete('website');
+    const button = form.querySelector('button')!;
+    button.disabled = true;
+    button.textContent = 'Sending…';
+    try {
+      if (!isBot) await fetch(form.action, { method: 'POST', mode: 'no-cors', body: data });
+      form.hidden = true;
+      done.hidden = false;
+    } catch {
+      button.disabled = false;
+      button.textContent = 'Try again';
+    }
+  });
+</script>
