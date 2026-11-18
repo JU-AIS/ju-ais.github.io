@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { config } from '../config';
 import JoinCta from '../components/JoinCta.astro';
 
 const mission = [
@@ -23,7 +24,7 @@ const board = [
 <Layout title="About" description="Who we are: a student-led non-profit AI association at Jönköping University.">
   <section class="section section--dark page-head">
     <div class="container">
-      <h1>About JU AIS</h1>
+      <h1>About {config.shortName}</h1>
       <p class="page-head__lead">A student-led non-profit at Jönköping University, open to every student.</p>
     </div>
   </section>
@@ -32,7 +33,7 @@ const board = [
     <div class="container about">
       <h2 class="reveal">Who we are</h2>
       <p class="about__text reveal">
-        JU AIS is a student-led non-profit at Jönköping University. We grow AI literacy across all four schools and give
+        {config.shortName} is a student-led non-profit at Jönköping University. We grow AI literacy across all four schools and give
         students a place to build real things with AI outside the classroom: projects, research, build nights, workshops
         and talks with companies. No programming or AI background needed. Our goal is to form the next generation of AI
         builders and leaders at JU, and to bridge academia and industry along the way.
