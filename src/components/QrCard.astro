@@ -34,6 +34,7 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         <OrbitLogo />
       </div>
       <div class="qr__glare"></div>
+      <div class="qr__shine"></div>
     </div>
   </div>
 
@@ -85,10 +86,26 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     pointer-events: none;
     background: radial-gradient(
       circle at var(--gx, 50%) var(--gy, 50%),
-      rgb(255 255 255 / 0.35),
-      rgb(255 255 255 / 0) 55%
+      rgb(255 255 255 / 0.55),
+      rgb(255 255 255 / 0) 60%
     );
     mix-blend-mode: soft-light;
+  }
+  .qr__shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 6%;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent calc(var(--gx, 50%) - 30%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) - 8%),
+      rgb(255 255 255 / 0.9) var(--gx, 50%),
+      color-mix(in srgb, var(--color-accent) 70%, transparent) calc(var(--gx, 50%) + 8%),
+      transparent calc(var(--gx, 50%) + 30%)
+    );
+    mix-blend-mode: screen;
+    opacity: var(--shine, 0);
   }
 
   .qr__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
@@ -124,6 +141,7 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
       card.style.setProperty('--ry', `${current.y}deg`);
       card.style.setProperty('--gx', `${50 + (current.y / max) * 50}%`);
       card.style.setProperty('--gy', `${50 - (current.x / max) * 50}%`);
+      card.style.setProperty('--shine', `${Math.min(1, Math.hypot(current.x, current.y) / max) * 0.6}`);
       const moving = Math.abs(target.x - current.x) + Math.abs(target.y - current.y) > 0.01;
       frame = moving ? requestAnimationFrame(render) : 0;
     };
@@ -157,7 +175,7 @@ const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
       const dGamma = wrap(e.gamma - base.gamma);
       base.beta = wrap(base.beta + dBeta * 0.02);
       base.gamma = wrap(base.gamma + dGamma * 0.02);
-      tilt(dBeta, dGamma);
+      tilt(dBeta, -dGamma);
     };
 
     const orientation = DeviceOrientationEvent as unknown as {
