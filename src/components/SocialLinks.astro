@@ -6,6 +6,7 @@ import Instagram from '../icons/instagram.svg';
 import LinkedIn from '../icons/linkedin.svg';
 import Mail from '../icons/mail.svg';
 import Qr from '../icons/qr.svg';
+import WhatsApp from '../icons/whatsapp.svg';
 
 interface Props {
   footer?: boolean;
@@ -16,6 +17,7 @@ const { footer = false, qrHref } = Astro.props;
 
 const links = [
   { label: 'Discord', href: config.discordUrl, Icon: Discord },
+  { label: 'WhatsApp', href: config.whatsappUrl, Icon: WhatsApp },
   { label: 'Instagram', href: config.instagramUrl, Icon: Instagram },
   { label: 'LinkedIn', href: config.linkedinUrl, Icon: LinkedIn },
   { label: 'Email', href: `mailto:${config.email}`, Icon: Mail },

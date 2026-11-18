@@ -10,6 +10,7 @@ export const config = {
   appStoreUrl: 'https://apps.apple.com/se/app/hitract/id1494632863',
   googlePlayUrl: 'https://play.google.com/store/apps/details?id=se.hitract.hitract',
   discordUrl: 'https://discord.gg/Jr8uSpJt4S',
+  whatsappUrl: 'https://whatsapp.com/channel/0029VbDbmxMLSmbVIB9Nsz2a',
   instagramUrl: 'https://www.instagram.com/juaistudentassociation/',
   githubUrl: 'https://github.com/JU-AIS',
   linkedinUrl: 'https://www.linkedin.com/company/ju-ai-student-association/',

@@ -13,6 +13,7 @@ const links = [
     ? [{ label: `${nextEvent.data.title} · ${formatDate(nextEvent.data.date)}`, href: `/events#${nextEvent.id}` }]
     : []),
   { label: 'Join our Discord', href: config.discordUrl, external: true },
+  { label: 'Get updates on WhatsApp', href: config.whatsappUrl, external: true },
   { label: 'Website', href: '/' },
   { label: 'For companies', href: '/partners' },
   { label: 'Email us', href: `mailto:${config.email}` },
