@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import QrCarousel from '../components/QrCarousel.astro';
+import { pagePaths } from '../lib/pages';
+
+export function getStaticPaths() {
+  return pagePaths.map((path) => ({ params: { qr: path === '/' ? 'qr' : `${path.slice(1)}/qr` }, props: { path } }));
+}
+
+const { path } = Astro.props;
+---
+
+<Layout title="QR codes" bare>
+  <QrCarousel path={path} />
+</Layout>

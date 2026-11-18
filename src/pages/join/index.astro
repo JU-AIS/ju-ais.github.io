@@ -1,0 +1,114 @@
+---
+import { readFileSync } from 'node:fs';
+import Layout from '../../layouts/Layout.astro';
+import { config } from '../../config';
+import { logoInner, qrSvg } from '../../lib/qr';
+
+const logo = logoInner(readFileSync('public/logo.svg', 'utf8'));
+const colors = { background: '#FFFFFF', modules: 'var(--color-ink)', eyes: 'var(--color-primary)' };
+const steps = [
+  {
+    title: 'Get the HiTract app',
+    text: 'Scan with your phone camera to open the App Store or Google Play.',
+    qr: qrSvg(new URL('/join/app', Astro.site).href, logo, colors, 'qr-app'),
+  },
+  {
+    title: 'Join in the app',
+    text: 'Scan again to open our membership in HiTract.',
+    qr: qrSvg(config.membershipUrl, logo, colors, 'qr-join'),
+  },
+];
+const stores = [
+  { label: 'App Store', href: config.appStoreUrl },
+  { label: 'Google Play', href: config.googlePlayUrl },
+];
+---
+
+<Layout title="Join" description={`Join ${config.shortName} through the HiTract student app.`}>
+  <section class="section section--dark page-head">
+    <div class="container">
+      <h1>Join {config.shortName}</h1>
+      <p class="page-head__lead">Open to every student at Jönköping University. Membership lives in the HiTract student app.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="join-phone">
+        <a href={config.membershipUrl} class="btn btn--primary join-phone__open">Open in HiTract</a>
+        <p class="join-phone__hint">Opens our membership in the app.</p>
+        <div class="join-box">
+          <h2>No HiTract app yet?</h2>
+          <p>Download it and create an account, then come back here and tap <strong>Open in HiTract</strong>.</p>
+          <div class="join-box__stores">
+            {stores.map((store) => <a href={store.href} class="btn btn--secondary" target="_blank" rel="noopener">{store.label}</a>)}
+          </div>
+        </div>
+      </div>
+
+      <div class="join-desk">
+        <ol class="join-desk__steps">
+          {
+            steps.map((step, i) => (
+              <li class="join-step">
+                <p class="join-step__num">Step {i + 1}</p>
+                <h2>{step.title}</h2>
+                <p class="join-step__text">{step.text}</p>
+                <div class="join-step__qr">
+                  <Fragment set:html={step.qr.svg} />
+                  {/* Browsers clip the inlined logo to a dot, so it is overlaid like in the QR carousel. */}
+                  <img
+                    src="/logo.svg"
+                    alt=""
+                    class="join-step__logo"
+                    style={`left:${step.qr.logoBox.start * 100}%;top:${step.qr.logoBox.start * 100}%;width:${step.qr.logoBox.size * 100}%`}
+                  />
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="join-desk__stores">
+          Or download HiTract from {stores.map((store, i) => <>{i > 0 && ' or '}<a href={store.href} target="_blank" rel="noopener">{store.label}</a></>)}.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .join-phone { display: grid; gap: 0.75rem; max-width: 30rem; }
+  .join-phone__open { width: 100%; font-size: 1.15rem; padding-block: 1.1rem; }
+  .join-phone__hint { margin: 0 0 1.5rem; text-align: center; color: var(--color-text-muted); }
+  .join-box { padding: 1.5rem; border: 1px solid var(--color-line-strong); border-radius: 1rem; background: var(--color-bg-soft); }
+  .join-box h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .join-box p { margin: 0 0 1.25rem; color: var(--color-text-muted); }
+  .join-box__stores { display: grid; gap: 0.75rem; }
+
+  .join-desk { display: none; }
+  .join-desk__steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 4rem; max-width: 52rem; }
+  /* Subgrid keeps both QR codes on one line when a step's text wraps. */
+  .join-step { position: relative; display: grid; grid-row: span 4; grid-template-rows: subgrid; align-content: start; }
+  .join-step + .join-step::before {
+    content: '→';
+    position: absolute;
+    left: -2.6rem;
+    top: 60%;
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  .join-step__num { margin: 0 0 0.25rem; font-family: var(--font-mono); font-size: var(--text-mono); color: var(--color-accent); }
+  .join-step h2 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .join-step__text { margin: 0 0 1.25rem; color: var(--color-text-muted); }
+  .join-step__qr { position: relative; width: min(100%, 280px); }
+  .join-step__logo { position: absolute; border-radius: var(--radius-logo); }
+  .join-step__qr > :global(svg) { display: block; width: 100%; height: auto; border-radius: 6%; }
+  .join-desk__stores { margin: 2rem 0 0; color: var(--color-text-muted); }
+  .join-desk__stores a { color: var(--color-text); text-underline-offset: 0.3em; }
+
+  /* Phones get one tap into the app; computers scan with the phone instead. */
+  @media (pointer: fine) {
+    .join-phone { display: none; }
+    .join-desk { display: block; }
+  }
+</style>

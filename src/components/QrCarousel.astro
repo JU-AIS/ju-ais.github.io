@@ -1,14 +1,14 @@
 ---
 import { readFileSync } from 'node:fs';
 import { logoInner, qrSvg } from '../lib/qr';
-import { qrCodes } from '../lib/qr-codes';
+import { qrCodes, qrStartFor } from '../lib/qr-codes';
 import OrbitLogo from './OrbitLogo.astro';
 
 interface Props {
-  start?: number;
+  path: string;
 }
 
-const { start = 0 } = Astro.props;
+const start = qrStartFor(Astro.props.path);
 const logo = logoInner(readFileSync('public/logo.svg', 'utf8'));
 const slides = qrCodes.map(({ title, href, fileName }, i) => {
   const url = new URL(href, Astro.site).href;
