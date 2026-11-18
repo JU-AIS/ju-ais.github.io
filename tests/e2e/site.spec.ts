@@ -51,11 +51,12 @@ test('links page has no chrome and the right buttons', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Join our Discord' })).toHaveAttribute('href', config.discordUrl);
 });
 
-test('footer and links page link to Discord, Instagram, LinkedIn and email', async ({ page }) => {
+test('footer and links page link to Discord, WhatsApp, Instagram, LinkedIn and email', async ({ page }) => {
   for (const path of ['/', '/links']) {
     await page.goto(path);
     const social = page.locator('.social');
     await expect(social.getByRole('link', { name: 'Discord' })).toHaveAttribute('href', config.discordUrl);
+    await expect(social.getByRole('link', { name: 'WhatsApp' })).toHaveAttribute('href', config.whatsappUrl);
     await expect(social.getByRole('link', { name: 'Instagram' })).toHaveAttribute('href', config.instagramUrl);
     await expect(social.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', config.linkedinUrl);
     await expect(social.getByRole('link', { name: 'Email' })).toHaveAttribute('href', `mailto:${config.email}`);
