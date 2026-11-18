@@ -22,7 +22,7 @@ Include what you found, where, and how to reproduce it.
 
 ## Scope
 
-In scope: this repository and the site at https://ju-ais.github.io.
+In scope: this repository and the site at https://juais.se.
 
 Out of scope: third-party services we link to or embed (HiTract, Discord, Google Forms, GitHub itself). Report those to their owners.
 
@@ -31,4 +31,4 @@ Out of scope: third-party services we link to or embed (HiTract, Discord, Google
 - Static site, no backend, no logins for visitors.
 - No secrets (passwords, tokens, keys) and no personal data in the repo. Membership data lives in HiTract, not here.
 - Dependencies are kept few and updated regularly.
-- SBOM (CycloneDX) for every deployed build: https://ju-ais.github.io/sbom.cdx.json
+- SBOM (CycloneDX) for every deployed build: https://juais.se/sbom.cdx.json
