@@ -30,7 +30,7 @@ const links = [
           <li>
             <a
               href={link.href}
-              class:list={['links__btn', { 'links__btn--primary': link.primary }]}
+              class:list={['btn', 'links__btn', link.primary ? 'btn--primary' : 'btn--secondary']}
               {...(link.external && { target: '_blank', rel: 'noopener' })}
             >
               {link.label}
@@ -40,7 +40,7 @@ const links = [
       }
     </ul>
     <div class="links__social">
-      <SocialLinks />
+      <SocialLinks qrHref="/links/qr" />
     </div>
   </section>
 </Layout>
@@ -53,30 +53,10 @@ const links = [
     padding-block: clamp(3rem, 10vh, 6rem) 3rem;
     text-align: center;
   }
-  .links__logo { margin: 0 auto 1.25rem; border-radius: 18px; }
+  .links__logo { margin: 0 auto 1.25rem; border-radius: var(--radius-logo); }
   .links h1 { font-size: 2.4rem; margin-bottom: 0.25rem; }
   .links__lead { color: var(--color-text-muted); margin-bottom: 2.25rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
-  .links__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 56px;
-    padding: 0.9rem 1.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-text) 30%, transparent);
-    border-radius: 6px;
-    background: var(--color-bg-soft);
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-  }
-  .links__btn:hover { border-color: var(--color-text); }
+  .links__btn { display: flex; padding-inline: 1.25rem; }
   .links__social { display: flex; justify-content: center; margin-top: 1.75rem; }
-  .links__btn--primary { background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
-  .links__btn--primary:hover { background: color-mix(in srgb, var(--color-accent), white 40%); }
-  @media (prefers-reduced-motion: reduce) {
-    .links__btn { transition: none; }
-  }
 </style>

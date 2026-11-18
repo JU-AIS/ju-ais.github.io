@@ -1,0 +1,9 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QrCarousel from '../../components/QrCarousel.astro';
+import { qrCodes } from '../../lib/qr-codes';
+---
+
+<Layout title="Links QR code" bare>
+  <QrCarousel start={qrCodes.findIndex(({ href }) => href === '/links')} />
+</Layout>

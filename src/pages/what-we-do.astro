@@ -55,12 +55,12 @@ const activities = [
   .activities { list-style: none; padding: 0; margin: 0 auto; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
   .activity {
     padding: 1.75rem;
-    border: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent);
-    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
     background: var(--color-bg-soft);
     transition: border-color 0.2s ease;
   }
-  .activity:hover { border-color: color-mix(in srgb, var(--color-text) 40%, transparent); }
+  .activity:hover { border-color: var(--color-line-hover); }
   .activity h2 { font-size: 1.4rem; }
   .activity p:last-child { margin: 0; color: var(--color-text-muted); }
   .activity .label { margin: 1.5rem 0 0.5rem; color: var(--color-accent); }

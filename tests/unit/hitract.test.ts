@@ -41,6 +41,14 @@ describe('hitract', () => {
     expect(md).toContain('Line one  \nLine two &lt;b>');
   });
 
+  it('escapes markdown link and image syntax so it shows as text', () => {
+    const body = (description: string) => toMarkdown(event({ description }), 'c', 'Europe/Stockholm', null).split('---\n\n')[1];
+    expect(body('[click](javascript:alert(1))')).toBe('\\[click\\](javascript:alert(1))\n');
+    expect(body('![](https://tracker.example/x.gif)')).toBe('!\\[\\](https://tracker.example/x.gif)\n');
+    expect(body('\\[ref]: javascript:x')).toBe('\\\\\\[ref\\]: javascript:x\n');
+    expect(body('Doors open 18:00.\n\nMore at https://juais.se')).toBe('Doors open 18:00.  \n  \nMore at https://juais.se\n');
+  });
+
   it('links to the club page without tickets and omits a missing cover', () => {
     const md = toMarkdown(event({ hasTickets: false, eventPlaceDescription: null, onlyForMembers: true }), 'our-club', 'Europe/Stockholm', null);
     expect(md).toContain(`signup: "${clubEventsPage('our-club')}"`);
