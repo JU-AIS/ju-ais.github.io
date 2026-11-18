@@ -2,6 +2,7 @@
 import { config } from '../config';
 import { formatDate, type Event } from '../lib/events';
 import DiscordIcon from '../icons/discord.svg';
+import OrbitLogo from './OrbitLogo.astro';
 
 interface Props {
   nextEvent?: Event;
@@ -12,6 +13,7 @@ const { nextEvent } = Astro.props;
 
 <section class="hero section--dark on-dark">
   <canvas class="hero__canvas" aria-hidden="true"></canvas>
+  <OrbitLogo class="hero__logo" />
   <div class="hero__content container">
     <p class="label hero__eyebrow">Jönköping University</p>
     <h1>AI for every student at JU.</h1>
@@ -52,6 +54,14 @@ const { nextEvent } = Astro.props;
     isolation: isolate;
   }
   .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; touch-action: pan-y; }
+  .hero :global(.hero__logo) {
+    position: absolute;
+    top: 50%;
+    right: max(1.25rem, calc((100vw - 1120px) / 2));
+    translate: 0 -50%;
+    width: clamp(180px, 24vw, 320px);
+    pointer-events: none;
+  }
   .hero::after {
     content: '';
     position: absolute;
@@ -84,6 +94,11 @@ const { nextEvent } = Astro.props;
   .hero__next-meta { font-family: var(--font-mono); font-size: 0.9rem; }
   .hero__next-arrow { margin-left: auto; }
 
+  /* Below this width the large logo would run into the headline, so it moves to the top corner. */
+  @media (max-width: 1099px) {
+    .hero :global(.hero__logo) { top: 1.5rem; translate: none; width: 120px; }
+  }
+
   @media (max-width: 720px) {
     .hero::after { background: linear-gradient(0deg, var(--color-bg-dark) 15%, color-mix(in srgb, var(--color-bg-dark) 55%, transparent) 60%, transparent 100%); }
     .hero__content { justify-content: flex-end; padding-block: 3rem 2.5rem; }
@@ -96,5 +111,9 @@ const { nextEvent } = Astro.props;
 <script>
   import { startHeroCanvas } from '../scripts/hero-canvas';
   const canvas = document.querySelector<HTMLCanvasElement>('.hero__canvas');
-  if (canvas) startHeroCanvas(canvas);
+  if (canvas) {
+    // Safari can run this before the stylesheet applies, so the canvas would be measured at 300x150 with no accent color.
+    if (document.readyState === 'complete') startHeroCanvas(canvas);
+    else window.addEventListener('load', () => startHeroCanvas(canvas), { once: true });
+  }
 </script>

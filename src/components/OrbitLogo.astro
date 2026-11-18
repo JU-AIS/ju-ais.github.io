@@ -1,0 +1,86 @@
+---
+// Animated version of public/logo.svg, matching Growth's orbit-symbol-animated.gif
+// (Brand Version 0.1, 3.6 s loop at 25 fps). Swap together with the logo.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const FRAMES = 90;
+const LOOP = '3.6s';
+const fmt = (n: number) => n.toFixed(2);
+const frames = Array.from({ length: FRAMES + 1 }, (_, f) => (f / FRAMES) * 2 * Math.PI);
+
+// One electron per orbit at constant angular speed. The vertical one goes top → right → bottom → left;
+// the two tilted ones mirror each other, so the left one runs the opposite way round its orbit.
+const vertical = (t: number) => [14.5 * Math.sin(t), -40 * Math.cos(t)];
+const tiltedLeft = (t: number) => {
+  const [x, y] = [-40 * Math.cos(t), -14.5 * Math.sin(t)];
+  const a = (-30 * Math.PI) / 180;
+  return [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
+};
+const tiltedRight = (t: number) => {
+  const [x, y] = tiltedLeft(t);
+  return [-x, y];
+};
+const electrons = [vertical, tiltedLeft, tiltedRight].map((at) =>
+  frames.map((t) => at(t).map(fmt).join(',')).join(';'),
+);
+// All three share one size curve: bigger on the way up the left, smaller on the way down the right.
+const radius = frames.map((t) => fmt(4.6 - 0.8 * Math.sin(t))).join(';');
+
+// The star beats twice per loop, each time the electrons pass the orbit ends.
+// Scale per GIF frame, measured from the GIF; one beat lasts 45 frames (1.8 s).
+const beat = [
+  1.119, 1.153, 1.16, 1.139, 1.101, 1.066, 1.05, 1.055, 1.075, 1.096, 1.102, 1.09, 1.063, 1.037, 1.02, 1.006,
+  ...Array(25).fill(1),
+  1.003, 1.016, 1.037, 1.075, 1.119,
+];
+const pulse = beat.map((s) => `${s} ${s}`).join(';');
+// A soft accent glow behind the star flashes with each beat (measured from the MP4; the GIF drops it).
+const glow = [
+  0.124, 0.166, 0.171, 0.157, 0.109, 0.077, 0.052, 0.057, 0.071, 0.097, 0.102, 0.097, 0.073, 0.03, 0.017, 0.01,
+  0.007, 0.004, 0.002, 0.002, 0.001, 0.003, 0.002,
+  ...Array(17).fill(0),
+  0.004, 0.008, 0.015, 0.027, 0.071, 0.124,
+].join(';');
+---
+
+<svg class:list={['orbit-logo', className]} viewBox="0 0 100 100" aria-hidden="true">
+  <defs>
+    <radialGradient id="orbit-logo-glow">
+      <stop offset="0.9" style="stop-color: var(--color-accent)" />
+      <stop offset="1" style="stop-color: var(--color-accent); stop-opacity: 0" />
+    </radialGradient>
+  </defs>
+  <g transform="translate(50 50)">
+    <circle r="19.8" fill="url(#orbit-logo-glow)" opacity="0">
+      <animate attributeName="opacity" dur="1.8s" repeatCount="indefinite" values={glow} />
+    </circle>
+    {[-30, 30, 90].map((rotate) => <ellipse rx="40" ry="14.5" transform={`rotate(${rotate})`} class="orbit-logo__ring" />)}
+    {
+      electrons.map((motion) => (
+        <circle r="4.6" class="orbit-logo__dot">
+          <animateMotion dur={LOOP} repeatCount="indefinite" calcMode="linear" values={motion} />
+          <animate attributeName="r" dur={LOOP} repeatCount="indefinite" values={radius} />
+        </circle>
+      ))
+    }
+    <path class="orbit-logo__star" d="M0 -15 Q3 -3 15 0 Q3 3 0 15 Q-3 3 -15 0 Q-3 -3 0 -15 Z">
+      <animateTransform attributeName="transform" type="scale" dur="1.8s" repeatCount="indefinite" values={pulse} />
+    </path>
+  </g>
+</svg>
+
+<style>
+  .orbit-logo__ring { fill: none; stroke: var(--color-accent); stroke-width: 2.6; }
+  .orbit-logo__dot,
+  .orbit-logo__star { fill: var(--color-text-on-dark); }
+</style>
+
+<script>
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<SVGSVGElement>('.orbit-logo').forEach((svg) => svg.pauseAnimations());
+  }
+</script>
