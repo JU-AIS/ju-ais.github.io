@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import OrbitLogo from '../components/OrbitLogo.astro';
+---
+
+<Layout title="Page not found" description="This page does not exist.">
+  <section class="section section--dark page-head not-found">
+    <div class="container not-found__inner">
+      <div>
+        <p class="label">Error 404</p>
+        <h1>Page not found</h1>
+        <p class="page-head__lead">This page has drifted out of orbit, or never existed.</p>
+        <div class="not-found__actions">
+          <a href="/" class="btn btn--primary">Back to home</a>
+          <a href="/events" class="text-link">See upcoming events</a>
+        </div>
+      </div>
+      <OrbitLogo class="not-found__logo" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found { min-height: 70svh; display: flex; align-items: center; }
+  .not-found__inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2rem;
+  }
+  .not-found h1 { margin-block: 0.75rem 1rem; }
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .not-found .text-link { color: var(--color-text-on-dark); }
+  .not-found :global(.not-found__logo) { width: clamp(160px, 22vw, 260px); height: auto; }
+  @media (max-width: 720px) {
+    .not-found__inner { grid-template-columns: 1fr; }
+    .not-found :global(.not-found__logo) { order: -1; width: 112px; }
+  }
+</style>
