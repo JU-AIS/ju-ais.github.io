@@ -16,7 +16,7 @@ npm run build    # output in dist/
 |---|---|
 | Name, Join/Discord links, emails | `src/config.ts` |
 | Colors and fonts | `src/styles/theme.css` |
-| Logo | `public/logo.svg` (light bg), `public/logo-dark.svg` (dark bg), `public/favicon.svg` |
+| Logo | `public/logo.svg` (light bg), `public/logo-dark.svg` (dark bg), `public/favicon.svg` + PNGs rendered from it (`favicon-96.png`, `apple-touch-icon.png`, for Safari) |
 | HiTract club (event source) | `hitractClub` in `src/config.ts` |
 | Synced events (generated, not committed) | `src/content/events/hitract/` |
 
