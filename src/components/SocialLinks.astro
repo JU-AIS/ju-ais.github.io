@@ -4,12 +4,20 @@ import Discord from '../icons/discord.svg';
 import Instagram from '../icons/instagram.svg';
 import LinkedIn from '../icons/linkedin.svg';
 import Mail from '../icons/mail.svg';
+import Qr from '../icons/qr.svg';
+
+interface Props {
+  qr?: boolean;
+}
+
+const { qr = false } = Astro.props;
 
 const links = [
   { label: 'Discord', href: config.discordUrl, Icon: Discord },
   { label: 'Instagram', href: config.instagramUrl, Icon: Instagram },
   { label: 'LinkedIn', href: config.linkedinUrl, Icon: LinkedIn },
   { label: 'Email', href: `mailto:${config.email}`, Icon: Mail },
+  ...(qr ? [{ label: 'QR code', href: '/qr', Icon: Qr }] : []),
 ];
 ---
 
@@ -17,7 +25,7 @@ const links = [
   {
     links.map(({ label, href, Icon }) => (
       <li>
-        <a href={href} aria-label={label} title={label} {...(!href.startsWith('mailto:') && { target: '_blank', rel: 'noopener' })}>
+        <a href={href} aria-label={label} title={label} {...(href.startsWith('http') && { target: '_blank', rel: 'noopener' })}>
           <Icon width={22} height={22} aria-hidden="true" />
         </a>
       </li>
