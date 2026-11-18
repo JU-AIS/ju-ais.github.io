@@ -64,3 +64,9 @@ test('partners page has a mailto link', async ({ page }) => {
   await page.goto('/partners');
   await expect(page.locator(`a[href^="mailto:${config.partnerEmail}"]`).first()).toBeVisible();
 });
+
+test('unknown path shows the 404 page with a home link', async ({ page }) => {
+  await page.goto('/this-page-does-not-exist');
+  await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+  await expect(page.locator('.not-found').getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
+});
