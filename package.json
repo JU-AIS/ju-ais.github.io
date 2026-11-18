@@ -14,10 +14,12 @@
     "sbom": "npm sbom --sbom-format cyclonedx"
   },
   "dependencies": {
-    "astro": "^7.3.8"
+    "astro": "^7.3.8",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
+    "@types/qrcode": "^1.5.6",
     "vitest": "^5.1.0"
   }
 }
