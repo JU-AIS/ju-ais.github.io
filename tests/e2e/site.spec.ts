@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { config } from '../../src/config';
 
@@ -60,7 +61,36 @@ test('footer and links page link to Discord, Instagram, LinkedIn and email', asy
   }
 });
 
+test('footer links to GitHub and the QR page', async ({ page }) => {
+  await page.goto('/');
+  const footer = page.locator('footer');
+  await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', config.githubUrl);
+  await expect(footer.getByRole('link', { name: 'QR code' })).toHaveAttribute('href', '/qr');
+});
+
 test('partners page has a mailto link', async ({ page }) => {
   await page.goto('/partners');
   await expect(page.locator(`a[href^="mailto:${config.partnerEmail}"]`).first()).toBeVisible();
+});
+
+for (const path of ['/qr', '/links/qr']) {
+  test(`${path} downloads a static 2048px PNG and a standalone SVG`, async ({ page }) => {
+    await page.goto(path);
+    const read = async (type: string) => {
+      const [download] = await Promise.all([page.waitForEvent('download'), page.click(`[data-download=${type}]`)]);
+      return readFileSync((await download.path())!);
+    };
+    const png = await read('png');
+    expect(png.subarray(1, 4).toString()).toBe('PNG');
+    expect(png.readUInt32BE(16)).toBe(2048);
+    const svg = (await read('svg')).toString();
+    expect(svg).not.toContain('var(');
+    expect(svg).not.toContain('<animate');
+  });
+}
+
+test('unknown path shows the 404 page with a home link', async ({ page }) => {
+  await page.goto('/this-page-does-not-exist');
+  await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+  await expect(page.locator('.not-found').getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
 });

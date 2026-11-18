@@ -77,7 +77,7 @@ const board = [
   .about h2 { margin: 0; }
   .about__text { max-width: 44rem; font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.6; margin: 0; }
   .mission { margin: 0; padding: 0; list-style: none; counter-reset: mission; max-width: 44rem; }
-  .mission li { counter-increment: mission; display: grid; grid-template-columns: 2.5rem 1fr; padding-block: 1rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); font-size: 1.15rem; }
+  .mission li { counter-increment: mission; display: grid; grid-template-columns: 2.5rem 1fr; padding-block: 1rem; border-top: 1px solid var(--color-line); font-size: 1.15rem; }
   .mission li::before { content: counter(mission); font-family: var(--font-mono); color: var(--color-text-muted); }
   .board { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem 2rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); color: var(--color-text-muted); }
   @media (min-width: 900px) {
