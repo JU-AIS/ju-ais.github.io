@@ -81,7 +81,7 @@ const rendered = await Promise.all(
 
 <style>
   .events { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
-  .event-card { border-radius: 6px; overflow: hidden; background: var(--color-bg-soft); border: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); transition: border-color 0.2s ease; }
+  .event-card { border-radius: 6px; overflow: hidden; background: var(--color-bg-soft); border: 1px solid var(--color-line); transition: border-color 0.2s ease; }
   .event-card:hover { border-color: color-mix(in srgb, var(--color-text) 40%, transparent); }
   .event-card__link { display: block; height: 100%; text-decoration: none; }
   .event-card__body { padding: 1.4rem 1.4rem 1.6rem; }
@@ -128,7 +128,7 @@ const rendered = await Promise.all(
   }
   .event-modal :global(.cover--placeholder) { aspect-ratio: 16 / 7; }
   .event-modal__body { padding: 1.75rem clamp(1.25rem, 4vw, 2.5rem) 2.25rem; }
-  .event-modal__details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0 1.5rem; padding: 1rem 0; border-block: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); }
+  .event-modal__details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0 1.5rem; padding: 1rem 0; border-block: 1px solid var(--color-line); }
   .event-modal__details dd { margin: 0.2rem 0 0; }
   .event-modal__content { margin-bottom: 1.75rem; }
   .event-modal__photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; margin-bottom: 1.75rem; }
