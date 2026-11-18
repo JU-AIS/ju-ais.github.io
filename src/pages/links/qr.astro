@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QrCard from '../../components/QrCard.astro';
+import { config } from '../../config';
+import { slugify } from '../../lib/hitract';
+---
+
+<Layout title="Links QR code" bare>
+  <QrCard url={new URL('/links', Astro.site).href} title="Links" fileName={`${slugify(config.shortName)}-links-qr`} />
+</Layout>
