@@ -20,8 +20,8 @@
   /* Reserved for text on light sections; none exist yet. */
   --color-text-on-light: var(--color-ink);
   --color-line: color-mix(in srgb, var(--color-text) 24%, transparent);
-  --color-line-strong: var(--color-line-strong);
-  --color-line-hover: var(--color-line-hover);
+  --color-line-strong: color-mix(in srgb, var(--color-text) 30%, transparent);
+  --color-line-hover: color-mix(in srgb, var(--color-text) 40%, transparent);
   --color-overlay: color-mix(in srgb, var(--color-bg-dark) 70%, transparent);
 
   --font-heading: 'Libre Caslon Text', Georgia, serif;
