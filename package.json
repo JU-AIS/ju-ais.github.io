@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "sync:events": "node scripts/sync-hitract.ts",
+    "swatches": "node scripts/design-swatches.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check": "npm run build && npm test && npm run test:e2e",
