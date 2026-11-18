@@ -116,6 +116,10 @@ const first = slides[start];
     margin-bottom: -3rem;
   }
   .qr__track::-webkit-scrollbar { display: none; }
+  @media (pointer: fine) {
+    .qr__track { cursor: grab; user-select: none; }
+    .qr__track.is-dragging { cursor: grabbing; }
+  }
   .qr__slide { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; }
 
   .qr__stage { perspective: 900px; }
@@ -240,6 +244,30 @@ const first = slides[start];
     { passive: true },
   );
   dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+
+  // Mouse drag to swipe; touch already swipes natively. Snapping is paused while dragging so the track follows the mouse.
+  let drag: { x: number; left: number } | null = null;
+  track.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag = { x: e.clientX, left: track.scrollLeft };
+    track.setPointerCapture(e.pointerId);
+    track.style.scrollSnapType = 'none';
+    track.classList.add('is-dragging');
+  });
+  track.addEventListener('pointermove', (e) => {
+    if (drag) track.scrollLeft = drag.left - (e.clientX - drag.x);
+  });
+  const endDrag = (e: PointerEvent) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    drag = null;
+    track.classList.remove('is-dragging');
+    const from = Math.round((track.scrollLeft + dx) / track.clientWidth);
+    go(Math.abs(dx) > track.clientWidth * 0.15 ? from - Math.sign(dx) : from);
+    setTimeout(() => track.style.removeProperty('scroll-snap-type'), reducedMotion ? 0 : 450);
+  };
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
   document.addEventListener('keydown', (e) => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowLeft') go(active - 1);
@@ -283,6 +311,7 @@ const first = slides[start];
     // Touch pointers are left to the native horizontal swipe and the gyro, so only mouse/pen drive the pointer tilt.
     track.addEventListener('pointermove', (e) => {
       if (e.pointerType === 'touch') return;
+      if (drag) return tilt(0, 0);
       const box = slide().querySelector<HTMLElement>('.qr__stage')!.getBoundingClientRect();
       const width = card().offsetWidth;
       const x = (e.clientX - box.left - (box.width - width) / 2) / width;

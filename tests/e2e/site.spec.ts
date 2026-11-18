@@ -113,6 +113,18 @@ test('/qr changes slide with arrow keys and horizontal scrolling', async ({ page
   await expect(page.locator('.qr h1')).toHaveText(qrCodes[last].title);
 });
 
+test('/qr changes slide by dragging with the mouse', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'touch swipes natively');
+  await page.goto('/qr');
+  const box = (await page.locator('.qr__track').boundingBox())!;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width * 0.7, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.3, y, { steps: 8 });
+  await page.mouse.up();
+  await expect(page.locator('.qr h1')).toHaveText(qrCodes[1].title);
+});
+
 test('/qr has no duplicate ids', async ({ page }) => {
   await page.goto('/qr');
   const ids = await page.locator('[id]').evaluateAll((els) => els.map((el) => el.id));
