@@ -1,4 +1,4 @@
-/* Brand Version 0 (preliminary). Swap colors and fonts here only. */
+/* Brand Version 0 (preliminary). Swap colors, fonts and shape tokens here only. */
 @font-face { font-family: 'Libre Caslon Text'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/libre-caslon-text-400.woff2') format('woff2'); }
 @font-face { font-family: 'Libre Caslon Text'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/libre-caslon-text-400-italic.woff2') format('woff2'); }
 @font-face { font-family: 'Libre Caslon Text'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/libre-caslon-text-700.woff2') format('woff2'); }
@@ -10,15 +10,30 @@
   --color-secondary: #5B2A86;
   --color-deep: #3F2475;
   --color-accent: #C9B3F2;
+  /* theme-color in src/layouts/Layout.astro must match (meta tags cannot use CSS variables). */
   --color-bg-dark: #1F1630;
   --color-bg: #2E2246;
   --color-bg-soft: #42325F;
   --color-text: #FFFFFF;
   --color-text-muted: #D3CCE0;
-  --color-text-on-dark: #FFFFFF;
   --color-ink: #1E1035;
+  /* Reserved for text on light sections; none exist yet. */
+  --color-text-on-light: var(--color-ink);
+  --color-line: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --color-line-strong: color-mix(in srgb, var(--color-text) 30%, transparent);
+  --color-line-hover: color-mix(in srgb, var(--color-text) 40%, transparent);
+  --color-overlay: color-mix(in srgb, var(--color-bg-dark) 70%, transparent);
 
   --font-heading: 'Libre Caslon Text', Georgia, serif;
   --font-body: 'Libre Caslon Text', Georgia, serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --text-label: 0.78rem;
+  --text-mono-sm: 0.85rem;
+  --text-mono: 0.9rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-logo: 22%;
 }
