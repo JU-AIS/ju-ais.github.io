@@ -14,11 +14,26 @@ npm run build    # output in dist/
 
 | What | Where |
 |---|---|
-| Name, Join/Discord links, emails | `src/config.ts` |
-| Colors and fonts | `src/styles/theme.css` |
+| Name, Join/Discord/GitHub links, emails | `src/config.ts` |
+| Colors, fonts, radii and text sizes (tokens) | `src/styles/theme.css` |
+| Design system: every token, logo and UI pattern | [DESIGN.md](DESIGN.md) |
+| QR codes on `/qr` (one line per code) | `src/lib/qr-codes.ts` |
 | Logo | `public/logo.svg` (light bg), `public/logo-dark.svg` (dark bg), `public/favicon.svg` + PNGs rendered from it (`favicon-96.png`, `apple-touch-icon.png`, for Safari) |
 | HiTract club (event source) | `hitractClub` in `src/config.ts` |
 | Synced events (generated, not committed) | `src/content/events/hitract/` |
+
+## Pages
+
+| Path | What |
+|---|---|
+| `/`, `/events`, `/what-we-do`, `/about`, `/partners` | Main site |
+| `/links` | Link-in-bio page (no navbar/footer) |
+| `/qr` | Swipeable QR codes (website, links, HiTract) with PNG/SVG download. `/links/qr` opens it on the links code |
+| `404.html` | Shown by GitHub Pages for unknown paths |
+
+## QR codes
+
+Each entry in `src/lib/qr-codes.ts` (`{ title, href, fileName }`, `href` a site path or full URL) becomes a slide with its own dot, downloads and copy link. Codes are generated at build time (`qrcode`, error correction H) with the logo from `public/logo.svg` in the center.
 
 ## Events
 
@@ -36,6 +51,8 @@ npm test           # unit tests (Vitest)
 npm run test:e2e   # end-to-end tests (Playwright)
 npm run check      # build + all tests
 ```
+
+After changing a color in `theme.css`, run `npm run swatches` to refresh the color swatches used in `DESIGN.md`.
 
 ## SBOM
 
@@ -57,7 +74,8 @@ See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
 |---|---|---|
 | Discord, Instagram | [Simple Icons](https://simpleicons.org) | CC0. Logos are trademarks; Discord's and Meta's brand guidelines allow them, unmodified in white/black, to link to our own server/profile. |
 | LinkedIn | Simple Icons v8 (removed in later versions) | CC0. LinkedIn's brand guidelines allow the "in" logo in white/black to link to our own page. |
-| Email | [Material Icons](https://fonts.google.com/icons) `mail` | Apache License 2.0, © Google. |
+| GitHub | [Simple Icons](https://simpleicons.org) | CC0. GitHub's logo guidelines allow the mark, unmodified, to link to our own organization. |
+| Email, QR code | [Material Icons](https://fonts.google.com/icons) `mail`, `qr_code` | Apache License 2.0, © Google. |
 
 ## Maintenance
 

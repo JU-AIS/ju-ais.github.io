@@ -28,7 +28,8 @@ export function logoInner(logoSvg: string): string {
     .replace(/<\/svg>\s*$/, '');
 }
 
-export function qrSvg(text: string, logo: string, colors: QrColors) {
+/** `id` must be unique per page, since several codes can be inlined together. */
+export function qrSvg(text: string, logo: string, colors: QrColors, id: string) {
   const { modules } = QRCode.create(text, { errorCorrectionLevel: 'H' });
   const size = modules.size;
   const full = size + MARGIN * 2;
@@ -59,8 +60,8 @@ export function qrSvg(text: string, logo: string, colors: QrColors) {
     eye(MARGIN, MARGIN, colors.eyes) +
     eye(far, MARGIN, colors.eyes) +
     eye(MARGIN, far, colors.eyes) +
-    `<clipPath id="qr-logo"><rect x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" rx="${logoSize * LOGO_RADIUS}"/></clipPath>` +
-    `<svg x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" viewBox="0 0 100 100" clip-path="url(#qr-logo)">${logo}</svg>` +
+    `<clipPath id="${id}-logo"><rect x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" rx="${logoSize * LOGO_RADIUS}"/></clipPath>` +
+    `<svg x="${logoAt}" y="${logoAt}" width="${logoSize}" height="${logoSize}" viewBox="0 0 100 100" clip-path="url(#${id}-logo)">${logo}</svg>` +
     `</svg>`;
 
   return { svg, logoBox: { start: logoAt / full, size: logoSize / full } };
