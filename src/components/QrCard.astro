@@ -1,0 +1,177 @@
+---
+import { readFileSync } from 'node:fs';
+import { logoInner, qrSvg } from '../lib/qr';
+import OrbitLogo from './OrbitLogo.astro';
+
+interface Props {
+  url: string;
+  title: string;
+  fileName: string;
+}
+
+const { url, title, fileName } = Astro.props;
+const logo = logoInner(readFileSync('public/logo.svg', 'utf8'));
+// CSS variables keep the brand swappable; the download script resolves them to real colors.
+const { svg, logoBox } = qrSvg(url, logo, {
+  background: '#FFFFFF',
+  modules: 'var(--color-ink)',
+  eyes: 'var(--color-primary)',
+});
+const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<section class="qr" data-url={url} data-file={fileName}>
+  <h1>{title}</h1>
+  <p class="qr__lead">Scan to open <a href={url}>{display}</a></p>
+
+  <div class="qr__stage">
+    <div class="qr__card">
+      <div class="qr__code" set:html={svg} />
+      <div
+        class="qr__logo"
+        style={`left:${logoBox.start * 100}%;top:${logoBox.start * 100}%;width:${logoBox.size * 100}%;height:${logoBox.size * 100}%`}
+      >
+        <OrbitLogo />
+      </div>
+      <div class="qr__glare"></div>
+    </div>
+  </div>
+
+  <div class="qr__actions">
+    <button type="button" class="btn btn--primary" data-download="png">Download PNG</button>
+    <button type="button" class="btn qr__btn" data-download="svg">Download SVG</button>
+    <button type="button" class="btn qr__btn" data-copy>Copy link</button>
+  </div>
+</section>
+
+<style>
+  .qr {
+    min-height: 100svh;
+    width: min(520px, 100% - 2rem);
+    margin-inline: auto;
+    padding-block: clamp(2.5rem, 8vh, 5rem) 3rem;
+    text-align: center;
+  }
+  .qr h1 { font-size: clamp(2rem, 7vw, 2.8rem); margin-bottom: 0.35rem; }
+  .qr__lead { color: var(--color-text-muted); margin-bottom: 2.5rem; font-family: var(--font-mono); font-size: 0.9rem; }
+  .qr__lead a { color: var(--color-text); text-underline-offset: 0.3em; }
+
+  .qr__stage { perspective: 900px; margin-bottom: 2.5rem; }
+  .qr__card {
+    --rx: 0deg;
+    --ry: 0deg;
+    position: relative;
+    width: min(100%, 380px);
+    margin-inline: auto;
+    border-radius: 6%;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-accent) 60%, transparent),
+      0 2px 0 var(--color-accent),
+      0 3px 0 color-mix(in srgb, var(--color-accent) 80%, var(--color-primary)),
+      0 5px 0 var(--color-primary),
+      0 7px 0 var(--color-deep),
+      0 18px 30px -6px rgb(0 0 0 / 0.55),
+      0 40px 70px -20px rgb(0 0 0 / 0.6);
+  }
+  .qr__card.is-tilting { transition: transform 0.08s linear; }
+  .qr__code :global(svg) { display: block; width: 100%; height: auto; border-radius: 6%; }
+  .qr__logo { position: absolute; border-radius: 12%; overflow: hidden; background: var(--color-primary); }
+  .qr__logo :global(svg) { display: block; width: 100%; height: 100%; padding: 9%; }
+  .qr__glare {
+    position: absolute;
+    inset: 0;
+    border-radius: 6%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at var(--gx, 30%) var(--gy, 20%),
+      rgb(255 255 255 / 0.35),
+      rgb(255 255 255 / 0) 55%
+    );
+    mix-blend-mode: soft-light;
+  }
+
+  .qr__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+  .qr__btn {
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    border-color: color-mix(in srgb, var(--color-text) 30%, transparent);
+  }
+  .qr__btn:hover { border-color: var(--color-text); }
+
+  @media (max-width: 480px) {
+    .qr__actions .btn { flex: 1 1 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qr__card { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.qr')!;
+  const card = root.querySelector<HTMLElement>('.qr__card')!;
+  const code = root.querySelector<SVGSVGElement>('.qr__code svg')!;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reducedMotion) {
+    card.style.setProperty('--rx', '8deg');
+    card.style.setProperty('--ry', '-10deg');
+    card.addEventListener('pointermove', (e) => {
+      const box = card.getBoundingClientRect();
+      const x = (e.clientX - box.left) / box.width;
+      const y = (e.clientY - box.top) / box.height;
+      card.classList.add('is-tilting');
+      card.style.setProperty('--ry', `${(x - 0.5) * 24}deg`);
+      card.style.setProperty('--rx', `${(0.5 - y) * 24}deg`);
+      card.style.setProperty('--gx', `${x * 100}%`);
+      card.style.setProperty('--gy', `${y * 100}%`);
+    });
+    card.addEventListener('pointerleave', () => {
+      card.classList.remove('is-tilting');
+      card.style.setProperty('--rx', '8deg');
+      card.style.setProperty('--ry', '-10deg');
+    });
+  }
+
+  const styles = getComputedStyle(document.documentElement);
+  const standaloneSvg = () =>
+    code.outerHTML.replace(/var\((--[\w-]+)\)/g, (_, name) => styles.getPropertyValue(name).trim());
+
+  const save = (blob: Blob, ext: string) => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${root.dataset.file}.${ext}`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  };
+
+  const toPng = (svg: string, size: number) =>
+    new Promise<Blob>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, size, size);
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('PNG export failed'))), 'image/png');
+      };
+      img.onerror = reject;
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    });
+
+  root.querySelectorAll<HTMLButtonElement>('[data-download]').forEach((button) =>
+    button.addEventListener('click', async () => {
+      const svg = standaloneSvg();
+      if (button.dataset.download === 'svg') save(new Blob([svg], { type: 'image/svg+xml' }), 'svg');
+      else save(await toPng(svg, 2048), 'png');
+    }),
+  );
+
+  const copy = root.querySelector<HTMLButtonElement>('[data-copy]')!;
+  copy.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(root.dataset.url!);
+    copy.textContent = 'Copied';
+    setTimeout(() => (copy.textContent = 'Copy link'), 1500);
+  });
+</script>
