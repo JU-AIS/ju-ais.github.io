@@ -17,6 +17,7 @@ export const config = {
   email: 'ju.ai.student.association@gmail.com',
   partnerEmail: 'ju.ai.student.association@gmail.com',
   partnerFormAction: 'https://docs.google.com/forms/d/e/1FAIpQLSeitmytU7Mz6EYiycImE0cuAYfZlpwyP97Hijm9NEIg-ccsew/formResponse',
+  goatcounterUrl: 'https://ju-ais.goatcounter.com/count',
   timeZone: 'Europe/Stockholm',
   hitractClub,
 };
