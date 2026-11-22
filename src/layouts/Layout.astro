@@ -36,6 +36,7 @@ const fullTitle = title ? `${title} · ${config.shortName}` : config.name;
     <meta property="og:type" content="website" />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
+    <script is:inline data-goatcounter={config.goatcounterUrl} async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     {!bare && <Navbar />}
