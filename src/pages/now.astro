@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { config } from '../config';
+---
+
+<Layout title="Now" bare>
+  <p class="now">Opening… <a href={config.nowUrl}>Tap here</a> if nothing happens.</p>
+</Layout>
+
+<style>
+  .now { min-height: 100svh; display: grid; place-content: center; padding: 1rem; text-align: center; }
+</style>
+
+<script>
+  import { config } from '../config';
+
+  location.replace(config.nowUrl);
+</script>

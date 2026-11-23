@@ -10,6 +10,7 @@ export const qrCodes = [
   { title: config.shortName, href: '/', fileName: `${slug}-qr` },
   { title: 'Links', href: '/links', fileName: `${slug}-links-qr` },
   { title: 'Join', href: config.joinUrl, fileName: `${slug}-join-qr` },
+  { title: 'Now', href: '/now', fileName: `${slug}-now-qr` },
 ];
 
 /** The slide `<path>/qr` starts on: the page's own code, else its section's, else the home code. */

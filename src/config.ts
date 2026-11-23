@@ -7,6 +7,8 @@ export const config = {
   joinUrl: '/join',
   // Universal link: opens the membership in the HiTract app, 404 in a browser without it.
   membershipUrl: 'https://open.hitract.se/hitclub/2494/memberships/2115',
+  // Target of /now, the reusable QR code. Point it at whatever is current (event, sign-up, form).
+  nowUrl: 'https://open.hitract.se/hitclub/2494/memberships/2115',
   appStoreUrl: 'https://apps.apple.com/se/app/hitract/id1494632863',
   googlePlayUrl: 'https://play.google.com/store/apps/details?id=se.hitract.hitract',
   discordUrl: 'https://discord.gg/Jr8uSpJt4S',
