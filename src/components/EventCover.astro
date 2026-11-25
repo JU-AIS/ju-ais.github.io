@@ -17,7 +17,7 @@ const part = (options: Intl.DateTimeFormatOptions) =>
 
 {
   cover ? (
-    <Image src={cover} alt={coverAlt ?? ''} widths={widths} sizes={sizes} class="cover" />
+    <Image src={cover} alt={coverAlt ?? ''} widths={widths} sizes={sizes} quality={100} class="cover" />
   ) : (
     <div class="cover cover--placeholder" aria-hidden="true">
       <span class="cover__day">{part({ day: '2-digit' })}</span>
@@ -27,12 +27,16 @@ const part = (options: Intl.DateTimeFormatOptions) =>
 }
 
 <style>
-  .cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  .cover--placeholder {
+  .cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     background-color: var(--color-bg);
     background-image: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 45%, transparent) 1.1px, transparent 1.6px);
     background-size: 24px 24px;
     background-position: center;
+  }
+  .cover--placeholder {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
