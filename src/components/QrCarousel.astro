@@ -234,15 +234,24 @@ const first = slides[start];
       behavior: reducedMotion ? 'instant' : 'smooth',
     });
 
-  track.scrollLeft = active * track.clientWidth;
-  track.addEventListener(
-    'scroll',
-    () => {
-      const index = Math.round(track.scrollLeft / track.clientWidth);
-      if (index !== active && slides[index]) setActive(index);
-    },
-    { passive: true },
-  );
+  // The title must always describe the visible code, or people scan the wrong one.
+  const syncToTrack = () => {
+    const index = Math.round(track.scrollLeft / track.clientWidth);
+    if (index !== active && slides[index]) setActive(index);
+  };
+  // Safari can ignore the first scroll before layout settles, so it is repeated on load unless the user already moved.
+  const start = active;
+  let moved = false;
+  const showStart = () => {
+    if (moved) return;
+    track.scrollLeft = start * track.clientWidth;
+    syncToTrack();
+  };
+  showStart();
+  window.addEventListener('load', showStart, { once: true });
+  track.addEventListener('pointerdown', () => (moved = true), { once: true });
+  dots.forEach((dot) => dot.addEventListener('click', () => (moved = true), { once: true }));
+  track.addEventListener('scroll', syncToTrack, { passive: true });
   dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
 
   // Mouse drag to swipe; touch already swipes natively. Snapping is paused while dragging so the track follows the mouse.

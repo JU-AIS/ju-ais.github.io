@@ -20,6 +20,12 @@ export async function getEvents(): Promise<{ upcoming: Event[]; past: Event[] }>
   return { upcoming, past };
 }
 
+export async function getNowUrl(): Promise<string> {
+  if (config.nowUrl) return config.nowUrl;
+  const { upcoming } = await getEvents();
+  return upcoming.find((event) => event.data.signup)?.data.signup ?? config.membershipUrl;
+}
+
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-GB', {
     timeZone: config.timeZone,

@@ -104,6 +104,25 @@ test('/links/qr opens the carousel on the links slide', async ({ page }) => {
   expect(scrolled).toBe(linksSlide);
 });
 
+test('/now/qr shows the Now code even when the first scroll is dropped (Safari)', async ({ page }) => {
+  await page.addInitScript(() => {
+    const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollLeft')!;
+    let dropped = false;
+    Object.defineProperty(Element.prototype, 'scrollLeft', {
+      ...desc,
+      set(value: number) {
+        if (!dropped && (this as Element).classList.contains('qr__track')) dropped = true;
+        else desc.set!.call(this, value);
+      },
+    });
+  });
+  const nowSlide = qrCodes.findIndex(({ href }) => href === '/now');
+  await page.goto('/now/qr');
+  await expect(page.locator('.qr h1')).toHaveText('Now');
+  const visible = await page.locator('.qr__track').evaluate((el) => Math.round(el.scrollLeft / el.clientWidth));
+  expect(visible).toBe(nowSlide);
+});
+
 test('/qr changes slide with arrow keys and horizontal scrolling', async ({ page }) => {
   await page.goto('/qr');
   await page.keyboard.press('ArrowRight');
@@ -194,4 +213,13 @@ test('/join/app shows both store links on desktop without redirecting', async ({
   await expect(page).toHaveURL(/\/join\/app\/?$/);
   await expect(page.getByRole('link', { name: 'App Store' })).toHaveAttribute('href', config.appStoreUrl);
   await expect(page.getByRole('link', { name: 'Google Play' })).toHaveAttribute('href', config.googlePlayUrl);
+});
+
+test('/now redirects to the next sign-up, or membership without events', async ({ page }) => {
+  await page.goto('/events');
+  const signup = page.locator('.event-modal a', { hasText: 'Sign up' }).first();
+  const expected = (await signup.count()) > 0 ? (await signup.getAttribute('href'))! : config.membershipUrl;
+  await page.route(/^https:\/\/(?!localhost)/, (route) => route.fulfill({ body: 'stub' }));
+  await page.goto('/now');
+  await expect(page).toHaveURL(expected);
 });
