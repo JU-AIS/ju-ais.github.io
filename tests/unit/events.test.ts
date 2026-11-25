@@ -6,9 +6,10 @@ vi.mock('astro:content', () => ({
   getCollection: async () => entries,
 }));
 
-import { formatDate, formatTime, getEvents, isPast, type Event } from '../../src/lib/events';
+import { config } from '../../src/config';
+import { formatDate, formatTime, getEvents, getNowUrl, isPast, type Event } from '../../src/lib/events';
 
-const event = (id: string, iso: string) => ({ id, data: { date: new Date(iso) } }) as unknown as Event;
+const event = (id: string, iso: string, signup?: string) => ({ id, data: { date: new Date(iso), signup } }) as unknown as Event;
 
 describe('events', () => {
   beforeEach(() => {
@@ -19,6 +20,7 @@ describe('events', () => {
   afterEach(() => {
     vi.useRealTimers();
     entries.length = 0;
+    config.nowUrl = '';
   });
 
   it('isPast is day-based in Europe/Stockholm', () => {
@@ -44,6 +46,33 @@ describe('events', () => {
     const { upcoming, past } = await getEvents();
     expect(upcoming.map((e) => e.id)).toEqual(['today', 'soon', 'far']);
     expect(past.map((e) => e.id)).toEqual(['recent', 'old']);
+  });
+
+  it('getNowUrl points at the next upcoming event with a sign-up', async () => {
+    entries.push(
+      event('past', '2026-12-01T18:00:00+01:00', 'https://t/past'),
+      event('later', '2027-01-20T18:00:00+01:00', 'https://t/later'),
+      event('no-tickets', '2026-12-10T18:00:00+01:00'),
+      event('soon', '2026-12-15T18:00:00+01:00', 'https://t/soon'),
+    );
+    expect(await getNowUrl()).toBe('https://t/soon');
+  });
+
+  it('getNowUrl keeps pointing at an event until its day is over', async () => {
+    entries.push(event('today', '2026-12-08T18:00:00+01:00', 'https://t/today'));
+    expect(await getNowUrl()).toBe('https://t/today');
+  });
+
+  it('getNowUrl falls back to membership without upcoming sign-ups', async () => {
+    expect(await getNowUrl()).toBe(config.membershipUrl);
+    entries.push(event('past', '2026-12-01T18:00:00+01:00', 'https://t/past'), event('no-tickets', '2026-12-20T18:00:00+01:00'));
+    expect(await getNowUrl()).toBe(config.membershipUrl);
+  });
+
+  it('getNowUrl prefers the manual override', async () => {
+    entries.push(event('soon', '2026-12-15T18:00:00+01:00', 'https://t/soon'));
+    config.nowUrl = 'https://forms.example/x';
+    expect(await getNowUrl()).toBe('https://forms.example/x');
   });
 
   it('formats date and time in Europe/Stockholm', () => {

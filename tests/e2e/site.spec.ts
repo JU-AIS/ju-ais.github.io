@@ -195,3 +195,12 @@ test('/join/app shows both store links on desktop without redirecting', async ({
   await expect(page.getByRole('link', { name: 'App Store' })).toHaveAttribute('href', config.appStoreUrl);
   await expect(page.getByRole('link', { name: 'Google Play' })).toHaveAttribute('href', config.googlePlayUrl);
 });
+
+test('/now redirects to the next sign-up, or membership without events', async ({ page }) => {
+  await page.goto('/events');
+  const signup = page.locator('.event-modal a', { hasText: 'Sign up' }).first();
+  const expected = (await signup.count()) > 0 ? (await signup.getAttribute('href'))! : config.membershipUrl;
+  await page.route(/^https:\/\/(?!localhost)/, (route) => route.fulfill({ body: 'stub' }));
+  await page.goto('/now');
+  await expect(page).toHaveURL(expected);
+});
