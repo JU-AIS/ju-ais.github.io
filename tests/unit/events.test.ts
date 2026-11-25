@@ -9,7 +9,8 @@ vi.mock('astro:content', () => ({
 import { config } from '../../src/config';
 import { formatDate, formatTime, getEvents, getNowUrl, isPast, type Event } from '../../src/lib/events';
 
-const event = (id: string, iso: string, signup?: string) => ({ id, data: { date: new Date(iso), signup } }) as unknown as Event;
+const event = (id: string, iso: string, signup?: string, hitractId?: number) =>
+  ({ id, data: { date: new Date(iso), signup, hitractId } }) as unknown as Event;
 
 describe('events', () => {
   beforeEach(() => {
@@ -56,6 +57,14 @@ describe('events', () => {
       event('soon', '2026-12-15T18:00:00+01:00', 'https://t/soon'),
     );
     expect(await getNowUrl()).toBe('https://t/soon');
+  });
+
+  it('getNowUrl opens HiTract events in the app', async () => {
+    entries.push(
+      event('later', '2027-01-20T18:00:00+01:00', 'https://t/later'),
+      event('hitract', '2026-12-10T18:00:00+01:00', 'https://pay.hitract.se/ticket/listTickets/?id=19062', 19062),
+    );
+    expect(await getNowUrl()).toBe('https://open.hitract.se/hitevent/19062');
   });
 
   it('getNowUrl keeps pointing at an event until its day is over', async () => {
