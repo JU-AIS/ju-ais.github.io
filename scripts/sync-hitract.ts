@@ -1,10 +1,12 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from '../src/config.ts';
-import { eventsUrl, imageUrl, isSynced, slugify, toMarkdown, type HitractEvent } from '../src/lib/hitract.ts';
+import { coverFile, eventsUrl, imageUrl, isSynced, slugify, toMarkdown, type HitractEvent } from '../src/lib/hitract.ts';
 
 const EVENTS_DIR = 'src/content/events';
 const SYNC_DIR = join(EVENTS_DIR, 'hitract');
+// Optional sharper covers than HiTract's 800 px, named after the event's slug (e.g. ju-ais-x-lovable-build-night.jpg).
+const COVERS_DIR = join(EVENTS_DIR, 'covers');
 // HiTract keeps finished events, so fetching from the club's start includes past events.
 const SINCE = '2026-11-01';
 const EXTENSIONS: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
@@ -47,6 +49,12 @@ function uniqueFolder(event: HitractEvent, taken: Set<string>): string {
   return taken.has(slug) ? `${slug}-${event.hitEventId}` : slug;
 }
 
+function localCover(event: HitractEvent): string | null {
+  if (!existsSync(COVERS_DIR)) return null;
+  const file = coverFile(event, readdirSync(COVERS_DIR));
+  return file ? `../../covers/${file}` : null;
+}
+
 async function downloadCover(event: HitractEvent, dir: string): Promise<string | null> {
   const url = imageUrl(event);
   if (!url) return null;
@@ -71,7 +79,8 @@ async function sync(): Promise<void> {
     mkdirSync(dir, { recursive: true });
 
     const imageId = event.eventImage?.id ?? null;
-    const cover = known && known.imageId === imageId ? known.cover : await downloadCover(event, dir);
+    const cached = known && known.imageId === imageId && known.cover?.startsWith('./') ? known.cover : null;
+    const cover = localCover(event) ?? cached ?? (await downloadCover(event, dir));
     writeFileSync(join(dir, 'index.md'), toMarkdown(event, club, config.timeZone, cover));
     console.log(`${known ? 'updated' : 'added  '} ${folder}`);
   }

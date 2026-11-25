@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clubEventsPage, isSynced, slugify, toIsoWithOffset, toMarkdown, type HitractEvent } from '../../src/lib/hitract';
+import { clubEventsPage, coverFile, isSynced, slugify, toIsoWithOffset, toMarkdown, type HitractEvent } from '../../src/lib/hitract';
 
 const event = (overrides: Partial<HitractEvent> = {}): HitractEvent => ({
   hitEventId: 42,
@@ -23,6 +23,13 @@ describe('hitract', () => {
   it('adds the Stockholm offset for winter and summer time', () => {
     expect(toIsoWithOffset('2026-12-08 18:00:00', 'Europe/Stockholm')).toBe('2026-12-08T18:00:00+01:00');
     expect(toIsoWithOffset('2026-07-01 12:30:00', 'Europe/Stockholm')).toBe('2026-07-01T12:30:00+02:00');
+  });
+
+  it('finds a local cover named after the event slug', () => {
+    expect(coverFile(event(), ['other.jpg', 'prompt-battle.PNG'])).toBe('prompt-battle.PNG');
+    expect(coverFile(event(), ['prompt-battle.webp'])).toBe('prompt-battle.webp');
+    expect(coverFile(event(), ['prompt-battle.pdf', 'prompt-battle-2.jpg', 'Prompt Battle.jpg'])).toBeNull();
+    expect(coverFile(event(), [])).toBeNull();
   });
 
   it('skips elections', () => {

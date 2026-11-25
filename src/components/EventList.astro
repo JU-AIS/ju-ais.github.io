@@ -18,7 +18,7 @@ const rendered = await Promise.all(
     rendered.map(({ event, past }) => (
       <li class="event-card reveal">
         <a href={`#${event.id}`} class="event-card__link" aria-haspopup="dialog">
-          <EventCover event={event} widths={[400, 800]} sizes="(min-width: 900px) 360px, 100vw" />
+          <EventCover event={event} widths={[400, 800, 1200, 1600]} sizes={events.length === 1 ? '(min-width: 760px) 60vw, 100vw' : '(min-width: 900px) 360px, 100vw'} />
           <div class="event-card__body">
             <p class="label">
               <time datetime={event.data.date.toISOString()}>{formatDate(event.data.date)}</time>
@@ -40,7 +40,7 @@ const rendered = await Promise.all(
         <button class="event-modal__close" aria-label="Close" data-close>
           ×
         </button>
-        <EventCover event={event} widths={[640, 1200]} sizes="(min-width: 760px) 720px, 100vw" />
+        <EventCover event={event} widths={[640, 1200, 1600]} sizes="(min-width: 760px) 720px, 100vw" />
         <div class="event-modal__body">
           <p class="label">{event.data.type}{past && ' · Past event'}</p>
           <h2 id={`${event.id}-title`}>{event.data.title}</h2>
