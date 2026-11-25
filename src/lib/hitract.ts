@@ -47,6 +47,9 @@ export function toIsoWithOffset(local: string, timeZone: string): string {
 
 export const imageUrl = (event: HitractEvent) => event.eventImage?.large ?? event.eventImage?.default ?? null;
 
+export const coverFile = (event: HitractEvent, files: string[]) =>
+  files.find((name) => /\.(jpe?g|png|webp)$/i.test(name) && name.replace(/\.[^.]+$/, '') === slugify(event.name)) ?? null;
+
 export function toMarkdown(event: HitractEvent, club: string, timeZone: string, cover: string | null): string {
   const signup = event.hasTickets
     ? `https://pay.hitract.se/ticket/listTickets/?id=${event.hitEventId}`
