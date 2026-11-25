@@ -17,6 +17,9 @@ const TYPES: Record<string, string> = { SOCIAL: 'social', LECTURE: 'lecture', WO
 export const eventsUrl = (club: string, fromDate: string, page: number) =>
   `${API}/${club}/allHitEvents?fromDate=${fromDate}&page=${page}&size=50&sort=eventDate,desc`;
 
+// Universal link: opens the event in the HiTract app.
+export const appEventUrl = (id: number) => `https://open.hitract.se/hitevent/${id}`;
+
 export const clubEventsPage = (club: string) => `https://hitract.se/hitclub/${club}/hitevents`;
 
 export const isSynced = (event: HitractEvent) => !SKIPPED_TYPES.has(event.hitEventType);

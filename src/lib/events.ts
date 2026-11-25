@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { config } from '../config';
+import { appEventUrl } from './hitract';
 
 export type Event = CollectionEntry<'events'>;
 
@@ -23,7 +24,9 @@ export async function getEvents(): Promise<{ upcoming: Event[]; past: Event[] }>
 export async function getNowUrl(): Promise<string> {
   if (config.nowUrl) return config.nowUrl;
   const { upcoming } = await getEvents();
-  return upcoming.find((event) => event.data.signup)?.data.signup ?? config.membershipUrl;
+  const next = upcoming.find(({ data }) => data.hitractId || data.signup);
+  if (!next) return config.membershipUrl;
+  return next.data.hitractId ? appEventUrl(next.data.hitractId) : next.data.signup!;
 }
 
 export function formatDate(date: Date): string {
