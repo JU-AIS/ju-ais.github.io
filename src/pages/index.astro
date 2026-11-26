@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import EventList from '../components/EventList.astro';
 import JoinCta from '../components/JoinCta.astro';
+import PartnerWall from '../components/PartnerWall.astro';
 import { getEvents } from '../lib/events';
 
 const { upcoming } = await getEvents();
@@ -43,6 +44,8 @@ const pitches = [
       {nextEvents.length > 0 ? <EventList events={nextEvents} /> : <p>New events are coming soon.</p>}
     </div>
   </section>
+
+  <PartnerWall />
 
   <JoinCta />
 </Layout>

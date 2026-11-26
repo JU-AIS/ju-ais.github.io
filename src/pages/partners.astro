@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { config } from '../config';
+import PartnerWall from '../components/PartnerWall.astro';
 
 const offers = [
   { title: 'Events', text: 'Host a build night or workshop with your tools, your data or your challenge.' },
@@ -43,6 +44,8 @@ const mailto = `mailto:${config.partnerEmail}?subject=${encodeURIComponent(`Part
       </ul>
     </div>
   </section>
+
+  <PartnerWall />
 
   <section class="section">
     <div class="container partners__end reveal">
