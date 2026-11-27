@@ -5,9 +5,10 @@ export const config = {
   name: 'Jönköping University AI Student Association',
   shortName: 'JU AIS',
   joinUrl: '/join',
-  // Universal link: opens the membership in the HiTract app, 404 in a browser without it.
-  membershipUrl: 'https://open.hitract.se/hitclub/2494/memberships/2115',
-  // Manual target of /now, the reusable QR code. Empty: the next upcoming event in the HiTract app (or its sign-up), else membershipUrl.
+  // Universal link: opens our club page in the HiTract app, 404 in a browser without it.
+  // Not the membership link: HiTract's Android app doesn't open that one.
+  clubUrl: 'https://open.hitract.se/hitclub/2494',
+  // Manual target of /now, the reusable QR code. Empty: the next upcoming event in the HiTract app (or its sign-up), else clubUrl.
   nowUrl: '' as string,
   appStoreUrl: 'https://apps.apple.com/se/app/hitract/id1494632863',
   googlePlayUrl: 'https://play.google.com/store/apps/details?id=se.hitract.hitract',

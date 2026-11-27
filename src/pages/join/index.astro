@@ -14,8 +14,8 @@ const steps = [
   },
   {
     title: 'Join in the app',
-    text: 'Scan again to open our membership in HiTract.',
-    qr: qrSvg(config.membershipUrl, logo, colors, 'qr-join'),
+    text: 'Scan again to open in HiTract.',
+    qr: qrSvg(config.clubUrl, logo, colors, 'qr-join'),
   },
 ];
 const stores = [
@@ -35,8 +35,7 @@ const stores = [
   <section class="section">
     <div class="container">
       <div class="join-phone">
-        <a href={config.membershipUrl} class="btn btn--primary join-phone__open">Open in HiTract</a>
-        <p class="join-phone__hint">Opens our membership in the app.</p>
+        <a href={config.clubUrl} class="btn btn--primary join-phone__open">Open in HiTract</a>
         <div class="join-box">
           <h2>No HiTract app yet?</h2>
           <p>Download it and create an account, then come back here and tap <strong>Open in HiTract</strong>.</p>
@@ -78,8 +77,7 @@ const stores = [
 
 <style>
   .join-phone { display: grid; gap: 0.75rem; max-width: 30rem; }
-  .join-phone__open { width: 100%; font-size: 1.15rem; padding-block: 1.1rem; }
-  .join-phone__hint { margin: 0 0 1.5rem; text-align: center; color: var(--color-text-muted); }
+  .join-phone__open { width: 100%; font-size: 1.15rem; padding-block: 1.1rem; margin-bottom: 1.5rem; }
   .join-box { padding: 1.5rem; border: 1px solid var(--color-line-strong); border-radius: 1rem; background: var(--color-bg-soft); }
   .join-box h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
   .join-box p { margin: 0 0 1.25rem; color: var(--color-text-muted); }
