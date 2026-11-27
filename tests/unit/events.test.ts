@@ -72,10 +72,10 @@ describe('events', () => {
     expect(await getNowUrl()).toBe('https://t/today');
   });
 
-  it('getNowUrl falls back to membership without upcoming sign-ups', async () => {
-    expect(await getNowUrl()).toBe(config.membershipUrl);
+  it('getNowUrl falls back to the club page without upcoming sign-ups', async () => {
+    expect(await getNowUrl()).toBe(config.clubUrl);
     entries.push(event('past', '2026-12-01T18:00:00+01:00', 'https://t/past'), event('no-tickets', '2026-12-20T18:00:00+01:00'));
-    expect(await getNowUrl()).toBe(config.membershipUrl);
+    expect(await getNowUrl()).toBe(config.clubUrl);
   });
 
   it('getNowUrl prefers the manual override', async () => {

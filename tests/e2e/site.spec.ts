@@ -194,7 +194,7 @@ test('/join shows QR codes on desktop and an Open in HiTract button on phones', 
   const open = page.getByRole('link', { name: 'Open in HiTract' });
   if (isMobile) {
     await expect(open).toBeVisible();
-    await expect(open).toHaveAttribute('href', config.membershipUrl);
+    await expect(open).toHaveAttribute('href', config.clubUrl);
     await expect(page.locator('.join-box').getByRole('link', { name: 'App Store' })).toHaveAttribute('href', config.appStoreUrl);
     await expect(page.locator('.join-box').getByRole('link', { name: 'Google Play' })).toHaveAttribute('href', config.googlePlayUrl);
     await expect(page.locator('.join-desk')).toBeHidden();
@@ -215,7 +215,7 @@ test('/join/app shows both store links on desktop without redirecting', async ({
   await expect(page.getByRole('link', { name: 'Google Play' })).toHaveAttribute('href', config.googlePlayUrl);
 });
 
-test('/now redirects to the next event, or membership without events', async ({ page }) => {
+test('/now redirects to the next event, or the club page without events', async ({ page }) => {
   await page.goto('/events');
   const signup = page.locator('.event-modal a', { hasText: 'Sign up' }).first();
   const ticketId = (await signup.count()) > 0 ? (await signup.getAttribute('href'))!.match(/listTickets\/\?id=(\d+)/)?.[1] : null;
@@ -223,7 +223,7 @@ test('/now redirects to the next event, or membership without events', async ({ 
     ? `https://open.hitract.se/hitevent/${ticketId}`
     : (await signup.count()) > 0
       ? (await signup.getAttribute('href'))!
-      : config.membershipUrl;
+      : config.clubUrl;
   await page.route(/^https:\/\/(?!localhost)/, (route) => route.fulfill({ body: 'stub' }));
   await page.goto('/now');
   await expect(page).toHaveURL(expected);
