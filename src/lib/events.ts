@@ -25,7 +25,7 @@ export async function getNowUrl(): Promise<string> {
   if (config.nowUrl) return config.nowUrl;
   const { upcoming } = await getEvents();
   const next = upcoming.find(({ data }) => data.hitractId || data.signup);
-  if (!next) return config.membershipUrl;
+  if (!next) return config.clubUrl;
   return next.data.hitractId ? appEventUrl(next.data.hitractId) : next.data.signup!;
 }
 
