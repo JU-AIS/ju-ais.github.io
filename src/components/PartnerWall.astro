@@ -1,0 +1,88 @@
+---
+import { partners } from '../data/partners';
+
+const ROWS = 3;
+const MIN_LOGOS_PER_ROW = 12;
+
+// Each row starts at a different partner so the wall doesn't line up in columns.
+const rows = Array.from({ length: ROWS }, (_, row) => {
+  const rotated = [...partners.slice(row % partners.length), ...partners.slice(0, row % partners.length)];
+  const copies = Math.ceil(MIN_LOGOS_PER_ROW / partners.length);
+  return Array.from({ length: copies }, () => rotated).flat();
+});
+---
+
+{
+  partners.length > 0 && (
+    <section class="section partner-wall" aria-labelledby="partner-wall-title">
+      <div class="container">
+        <p class="label reveal" id="partner-wall-title">Supported by</p>
+      </div>
+      <div class="partner-wall__board">
+        {rows.map((row, rowIndex) => (
+          <div class={`partner-wall__row ${rowIndex % 2 ? 'partner-wall__row--reverse' : ''}`}>
+            {/* The track holds the row twice so translating it by -50% loops seamlessly. */}
+            <div class="partner-wall__track">
+              {[...row, ...row].map((partner, i) => {
+                const isFirst = rowIndex === 0 && i < partners.length;
+                return (
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener"
+                    class={`partner-wall__logo partner-wall__logo--${partner.tier}`}
+                    aria-hidden={isFirst ? undefined : 'true'}
+                    tabindex={isFirst ? undefined : -1}
+                  >
+                    <img src={partner.logo} alt={partner.name} loading="lazy" />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .partner-wall { overflow: hidden; }
+  .partner-wall__board {
+    --cell: clamp(5rem, 9vw, 7.5rem);
+    display: grid;
+    gap: calc(var(--cell) * 0.35);
+    margin-top: 1.5rem;
+    padding-block: 1rem;
+    transform: rotate(-4deg) scale(1.08);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .partner-wall__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: partner-wall-scroll 60s linear infinite;
+  }
+  .partner-wall__row:nth-child(2) .partner-wall__track { margin-left: calc(var(--cell) * -0.75); animation-duration: 75s; }
+  .partner-wall__row--reverse .partner-wall__track { animation-direction: reverse; }
+
+  .partner-wall__logo {
+    display: grid;
+    place-items: center;
+    width: calc(var(--cell) * 1.6);
+    border-radius: var(--radius-md);
+  }
+  .partner-wall__logo img { display: block; width: auto; height: var(--cell); }
+  .partner-wall__logo--main { width: calc(var(--cell) * 2.4); }
+  .partner-wall__logo--main img { height: calc(var(--cell) * 1.4); }
+  .partner-wall__logo--supporter img { height: calc(var(--cell) * 0.6); }
+
+  @keyframes partner-wall-scroll {
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partner-wall__track { animation: none; }
+  }
+</style>
